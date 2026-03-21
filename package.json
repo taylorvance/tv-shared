@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "build": "npm run build --workspace @tv-shared/ui",
-    "build:ui": "npm run build --workspace @tv-shared/ui"
+    "build:ui": "npm run build --workspace @tv-shared/ui",
+    "verify": "npm run build"
   },
   "devDependencies": {
     "@types/react": "^19.2.5",

@@ -53,7 +53,10 @@ packages/
 
 This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
+- `.github/workflows/ci-verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/pages-deploy.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
+- `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
+- `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
 
 ## UI package
 
@@ -187,6 +190,30 @@ jobs:
       test-command: npm test -- --run
       build-command: npm run build
       artifact-path: dist
+```
+
+## CI standard
+
+Reusable CI workflow path:
+
+```text
+.github/workflows/ci-verify.yml
+```
+
+The recommended consumer contract is documented in:
+- `docs/consumer-standard.md`
+- `docs/adoption-plan.md`
+
+At a minimum, future consumers should converge on:
+- `lint`
+- `test`
+- `build`
+- `verify`
+
+This repo also uses the standard itself via:
+
+```text
+.github/workflows/ci.yml
 ```
 
 ## Consumer repos to inspect before changing shared code

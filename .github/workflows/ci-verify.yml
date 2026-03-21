@@ -1,0 +1,72 @@
+name: Reusable CI Verify
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version used for install and verification steps.
+        required: false
+        default: '20'
+        type: string
+      working-directory:
+        description: Directory containing the project to verify.
+        required: false
+        default: '.'
+        type: string
+      install-command:
+        description: Command used to install dependencies.
+        required: false
+        default: npm ci
+        type: string
+      lint-command:
+        description: Optional lint command. Leave empty to skip.
+        required: false
+        default: ''
+        type: string
+      test-command:
+        description: Optional test command. Leave empty to skip.
+        required: false
+        default: ''
+        type: string
+      build-command:
+        description: Optional build command. Leave empty to skip.
+        required: false
+        default: npm run build
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+          cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.install-command }}
+
+      - name: Lint
+        if: ${{ inputs.lint-command != '' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.lint-command }}
+
+      - name: Test
+        if: ${{ inputs.test-command != '' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.test-command }}
+
+      - name: Build
+        if: ${{ inputs.build-command != '' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ inputs.build-command }}
