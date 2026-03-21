@@ -2,8 +2,8 @@ import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from 'react';
 import {
   TVPROGRAMS_DEFAULT_LABEL,
   TVPROGRAMS_URL,
-} from './constants';
-import { TvProgramsMark } from './TvProgramsMark';
+} from './constants.js';
+import { TvProgramsMark } from './TvProgramsMark.js';
 
 const DEFAULT_ROOT_STYLE: CSSProperties = {
   alignItems: 'center',
