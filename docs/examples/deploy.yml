@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    uses: ttvance/tv-shared/.github/workflows/deploy-pages.yml@main
+    with:
+      node-version: '20'
+      working-directory: .
+      install-command: npm ci
+      lint-command: npm run lint
+      test-command: npm run test -- --run
+      build-command: npm run build
+      artifact-path: dist

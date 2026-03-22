@@ -8,12 +8,25 @@
   "scripts": {
     "build": "npm run build --workspace @tv-shared/ui",
     "build:ui": "npm run build --workspace @tv-shared/ui",
+    "changeset": "changeset",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "simple-git-hooks",
+    "release": "npm run build && changeset publish",
     "test": "vitest run",
     "test:dist": "node scripts/smoke-test-ui-dist.mjs",
+    "version-packages": "changeset version && npm install --package-lock-only",
     "verify": "npm run lint && npm run test && npm run build && npm run test:dist"
   },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "pre-push": "npm run verify"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx}": "eslint --fix"
+  },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -22,8 +35,10 @@
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "jsdom": "^25.0.1",
+    "lint-staged": "^15.5.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "simple-git-hooks": "^2.13.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.4",
     "vitest": "^4.0.16"

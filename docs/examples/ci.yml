@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: ttvance/tv-shared/.github/workflows/verify.yml@main
+    with:
+      node-version: '20'
+      working-directory: .
+      install-command: npm ci
+      lint-command: npm run lint
+      test-command: npm run test -- --run
+      build-command: npm run build

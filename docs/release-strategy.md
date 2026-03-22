@@ -26,12 +26,26 @@ Publishing too early creates versioning pressure before the boundaries are prove
 - the consumer installation story should be routine
 - release notes should matter because changes are no longer obvious from local context
 
-## Likely next step when publishing starts to matter
+## Release automation
 
-Adopt a dedicated release tool such as Changesets so the repo can:
-- record version intent with code changes
-- generate changelog entries
-- publish the UI package intentionally instead of ad hoc
+This repo now uses Changesets for package release automation.
+
+Relevant files:
+- `.changeset/config.json`
+- `.github/workflows/release.yml`
+
+Relevant scripts:
+- `npm run changeset`
+- `npm run version-packages`
+- `npm run release`
+
+Required GitHub secret for publish:
+- `NPM_TOKEN`
+
+Workflow behavior:
+- on `main`, verify the repo first
+- if unreleased changesets exist, create or update a version PR
+- after the version PR lands, publish `@tv-shared/ui` to npm
 
 ## Workflow guidance
 

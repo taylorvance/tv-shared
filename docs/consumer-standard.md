@@ -34,6 +34,10 @@ Consumers should call these workflows from this repo:
 - `tv-shared/.github/workflows/verify.yml`
 - `tv-shared/.github/workflows/deploy-pages.yml`
 
+Copyable examples live in:
+- `docs/examples/ci.yml`
+- `docs/examples/deploy.yml`
+
 Example CI workflow:
 
 ```yml
@@ -118,3 +122,5 @@ Suggested package.json additions:
 ```
 
 This keeps hook ownership local while still converging on one quality gate across projects.
+
+`tv-shared` itself now uses this exact pattern.

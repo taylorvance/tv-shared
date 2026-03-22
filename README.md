@@ -55,9 +55,11 @@ This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
 - `.github/workflows/verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
+- `.github/workflows/release.yml`: a Changesets-based release workflow for `@tv-shared/ui`.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
 - `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
 - `docs/release-strategy.md`: the release/versioning guidance for package adoption.
+- `docs/examples/`: copyable consumer workflow wrappers.
 
 ## UI package
 
@@ -154,6 +156,10 @@ The repo now verifies itself with:
 - internal consumer fixtures for plain CSS and utility-class usage
 - a built-package smoke test against `packages/ui/dist`
 
+Local hooks are also configured:
+- `pre-commit`: `lint-staged`
+- `pre-push`: `npm run verify`
+
 ## GitHub Pages workflow
 
 Reusable workflow path:
@@ -199,6 +205,12 @@ jobs:
       artifact-path: dist
 ```
 
+Example copyable wrapper file:
+
+```text
+docs/examples/deploy.yml
+```
+
 ## CI standard
 
 Reusable CI workflow path:
@@ -223,6 +235,39 @@ This repo also uses the standard itself via:
 ```text
 .github/workflows/ci.yml
 ```
+
+Example copyable wrapper file:
+
+```text
+docs/examples/ci.yml
+```
+
+## Release automation
+
+Release automation is now handled with Changesets.
+
+Key files:
+- `.changeset/config.json`
+- `.github/workflows/release.yml`
+- `docs/release-strategy.md`
+
+Key scripts:
+- `npm run changeset`
+- `npm run version-packages`
+- `npm run release`
+
+The release workflow:
+- verifies the repo on every `main` push
+- opens or updates a release PR when pending changesets exist
+- publishes `@tv-shared/ui` after the version PR lands, if `NPM_TOKEN` is configured
+
+## Local hooks
+
+This repo uses local hook automation through `simple-git-hooks`.
+
+Current hook behavior:
+- `pre-commit`: run `lint-staged`
+- `pre-push`: run `npm run verify`
 
 ## Consumer repos to inspect before changing shared code
 
