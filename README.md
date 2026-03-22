@@ -259,7 +259,7 @@ Key scripts:
 The release workflow:
 - verifies the repo on every `main` push
 - opens or updates a release PR when pending changesets exist
-- publishes `@tv-shared/ui` after the version PR lands, if `NPM_TOKEN` is configured
+- publishes `@tv-shared/ui` after the version PR lands using npm trusted publishing via GitHub OIDC
 
 ## Local hooks
 

@@ -39,13 +39,36 @@ Relevant scripts:
 - `npm run version-packages`
 - `npm run release`
 
-Required GitHub secret for publish:
-- `NPM_TOKEN`
+Release authentication model:
+- GitHub Actions OIDC trusted publishing
+- no long-lived `NPM_TOKEN` secret required for publish
 
 Workflow behavior:
 - on `main`, verify the repo first
 - if unreleased changesets exist, create or update a version PR
 - after the version PR lands, publish `@tv-shared/ui` to npm
+
+## Trusted publishing setup
+
+Use npm trusted publishing instead of a long-lived automation token.
+
+Required npm-side configuration:
+1. Create the package or scope ownership needed for `@tv-shared/ui`.
+2. On npm, open the package settings for `@tv-shared/ui`.
+3. In the trusted publisher section, add a GitHub Actions trusted publisher.
+4. Use these exact values:
+   - GitHub owner: `taylorvance`
+   - Repository: `tv-shared`
+   - Workflow file: `release.yml`
+   - Environment: leave empty unless you later add a required GitHub environment to publishing
+5. Save the trusted publisher.
+
+Required GitHub-side configuration:
+- none for npm credentials
+- the workflow already requests `id-token: write`
+
+Important implementation detail:
+- npm trusted publishing currently requires Node `22.14.0+` and npm `11.5.1+`, which the release workflow now installs explicitly
 
 ## Workflow guidance
 
