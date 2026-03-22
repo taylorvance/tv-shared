@@ -33,6 +33,8 @@ It is not an app. It is a dependency source for sibling repos such as:
 - Assume the UI package may be published independently from the apps.
 - Keep package boundaries clean so versioning and semver are straightforward.
 - Do not make consumer repos depend on `tvprograms` directly for shared assets or components.
+- When a change affects the published package `@taylorvance/tv-shared-ui`, create a Changeset in the same change unless the user explicitly says not to.
+- Do not create Changesets for docs-only, workflow-only, or internal tooling changes that do not affect the published package.
 
 ## Session startup checklist
 1. Inspect the current state of `../tvprograms`, `../mcts-web`, and `../wordlink`.

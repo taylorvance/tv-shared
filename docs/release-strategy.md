@@ -48,6 +48,10 @@ Workflow behavior:
 - if unreleased changesets exist, create or update a version PR
 - after the version PR lands, publish `@taylorvance/tv-shared-ui` to npm
 
+Changeset rule for this repo:
+- when a change affects the published package `@taylorvance/tv-shared-ui`, add a Changeset in the same change unless the user explicitly says not to
+- do not add Changesets for docs-only, workflow-only, or internal tooling changes that do not affect the published package
+
 ## Trusted publishing setup
 
 Use npm trusted publishing instead of a long-lived automation token.
