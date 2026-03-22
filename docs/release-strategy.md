@@ -21,7 +21,7 @@ Publishing too early creates versioning pressure before the boundaries are prove
 
 ## What should happen before registry publishing
 
-- at least two consumer repos should use `@tv-shared/ui`
+- at least two consumer repos should use `@taylorvance/tv-shared-ui`
 - the package exports should stop changing every session
 - the consumer installation story should be routine
 - release notes should matter because changes are no longer obvious from local context
@@ -46,15 +46,15 @@ Release authentication model:
 Workflow behavior:
 - on `main`, verify the repo first
 - if unreleased changesets exist, create or update a version PR
-- after the version PR lands, publish `@tv-shared/ui` to npm
+- after the version PR lands, publish `@taylorvance/tv-shared-ui` to npm
 
 ## Trusted publishing setup
 
 Use npm trusted publishing instead of a long-lived automation token.
 
 Required npm-side configuration:
-1. Create the package or scope ownership needed for `@tv-shared/ui`.
-2. On npm, open the package settings for `@tv-shared/ui`.
+1. Use the package name `@taylorvance/tv-shared-ui` under the existing `@taylorvance` npm user scope.
+2. On npm, open the package settings for `@taylorvance/tv-shared-ui`.
 3. In the trusted publisher section, add a GitHub Actions trusted publisher.
 4. Use these exact values:
    - GitHub owner: `taylorvance`

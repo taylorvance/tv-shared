@@ -6,8 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace @tv-shared/ui",
-    "build:ui": "npm run build --workspace @tv-shared/ui",
+    "build": "npm run build --workspace @taylorvance/tv-shared-ui",
+    "build:ui": "npm run build --workspace @taylorvance/tv-shared-ui",
     "changeset": "changeset",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

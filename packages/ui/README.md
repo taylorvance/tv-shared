@@ -1,4 +1,4 @@
-# `@tv-shared/ui`
+# `@taylorvance/tv-shared-ui`
 
 Shared React UI primitives for Taylor Vance portfolio projects.
 
@@ -25,7 +25,7 @@ Shared React UI primitives for Taylor Vance portfolio projects.
 Quick default usage:
 
 ```tsx
-import { BrandBadge } from '@tv-shared/ui';
+import { BrandBadge } from '@taylorvance/tv-shared-ui';
 
 export function Footer() {
   return <BrandBadge />;
@@ -35,7 +35,7 @@ export function Footer() {
 Consumer-owned styling:
 
 ```tsx
-import { BrandBadge } from '@tv-shared/ui';
+import { BrandBadge } from '@taylorvance/tv-shared-ui';
 
 export function Footer() {
   return (
@@ -54,17 +54,17 @@ export function Footer() {
 React component:
 
 ```tsx
-import { TvProgramsMark } from '@tv-shared/ui';
+import { TvProgramsMark } from '@taylorvance/tv-shared-ui';
 ```
 
 URL exports:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@tv-shared/ui';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui';
 ```
 
 Raw asset subpaths:
 
 ```tsx
-import tvMarkUrl from '@tv-shared/ui/tv.svg';
+import tvMarkUrl from '@taylorvance/tv-shared-ui/tv.svg';
 ```

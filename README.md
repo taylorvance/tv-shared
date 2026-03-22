@@ -55,7 +55,7 @@ This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
 - `.github/workflows/verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
-- `.github/workflows/release.yml`: a Changesets-based release workflow for `@tv-shared/ui`.
+- `.github/workflows/release.yml`: a Changesets-based release workflow for `@taylorvance/tv-shared-ui`.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
 - `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
 - `docs/release-strategy.md`: the release/versioning guidance for package adoption.
@@ -65,7 +65,7 @@ This repo now contains:
 
 ### Exports
 
-`@tv-shared/ui` currently exports:
+`@taylorvance/tv-shared-ui` currently exports:
 - `BrandBadge`
 - `TvProgramsMark`
 - `TVPROGRAMS_MARK_SVG_URL`
@@ -87,7 +87,7 @@ The extracted badge keeps the shared behavior stable:
 Example with defaults:
 
 ```tsx
-import { BrandBadge } from '@tv-shared/ui';
+import { BrandBadge } from '@taylorvance/tv-shared-ui';
 
 export function Footer() {
   return <BrandBadge />;
@@ -97,7 +97,7 @@ export function Footer() {
 Example with app-owned styling:
 
 ```tsx
-import { BrandBadge } from '@tv-shared/ui';
+import { BrandBadge } from '@taylorvance/tv-shared-ui';
 
 export function Footer() {
   return (
@@ -120,7 +120,7 @@ For cases that need an image URL rather than a React component, the package now 
 Bundler-friendly URL constants:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@tv-shared/ui';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui';
 
 export function HeaderLogo() {
   return <img src={TVPROGRAMS_MARK_SVG_URL} alt="TV Programs" />;
@@ -130,7 +130,7 @@ export function HeaderLogo() {
 Raw asset subpaths:
 
 ```tsx
-import tvMarkUrl from '@tv-shared/ui/tv.svg';
+import tvMarkUrl from '@taylorvance/tv-shared-ui/tv.svg';
 
 export function HeaderLogo() {
   return <img src={tvMarkUrl} alt="TV Programs" />;
@@ -138,8 +138,8 @@ export function HeaderLogo() {
 ```
 
 Available raw asset subpaths:
-- `@tv-shared/ui/tv.svg`
-- `@tv-shared/ui/tv.png`
+- `@taylorvance/tv-shared-ui/tv.svg`
+- `@taylorvance/tv-shared-ui/tv.png`
 
 ### Build
 
@@ -259,7 +259,7 @@ Key scripts:
 The release workflow:
 - verifies the repo on every `main` push
 - opens or updates a release PR when pending changesets exist
-- publishes `@tv-shared/ui` after the version PR lands using npm trusted publishing via GitHub OIDC
+- publishes `@taylorvance/tv-shared-ui` after the version PR lands using npm trusted publishing via GitHub OIDC
 
 ## Local hooks
 
