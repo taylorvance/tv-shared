@@ -8,11 +8,24 @@
   "scripts": {
     "build": "npm run build --workspace @tv-shared/ui",
     "build:ui": "npm run build --workspace @tv-shared/ui",
-    "verify": "npm run build"
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:dist": "node scripts/smoke-test-ui-dist.mjs",
+    "verify": "npm run lint && npm run test && npm run build && npm run test:dist"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "jsdom": "^25.0.1",
     "react": "^19.2.0",
-    "typescript": "^5.9.3"
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vitest": "^4.0.16"
   }
 }

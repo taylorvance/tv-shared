@@ -57,6 +57,7 @@ This repo now contains:
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
 - `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
+- `docs/release-strategy.md`: the release/versioning guidance for package adoption.
 
 ## UI package
 
@@ -144,8 +145,14 @@ From the repo root:
 
 ```bash
 npm install
-npm run build
+npm run verify
 ```
+
+The repo now verifies itself with:
+- ESLint
+- Vitest component tests
+- internal consumer fixtures for plain CSS and utility-class usage
+- a built-package smoke test against `packages/ui/dist`
 
 ## GitHub Pages workflow
 
@@ -203,6 +210,7 @@ Reusable CI workflow path:
 The recommended consumer contract is documented in:
 - `docs/consumer-standard.md`
 - `docs/adoption-plan.md`
+- `docs/release-strategy.md`
 
 At a minimum, future consumers should converge on:
 - `lint`

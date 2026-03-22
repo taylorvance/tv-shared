@@ -1,0 +1,21 @@
+.fixture-brand-badge {
+  align-items: center;
+  border: 1px solid #0f172a;
+  border-radius: 999px;
+  color: #0f172a;
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  text-decoration: none;
+}
+
+.fixture-brand-badge-icon {
+  display: block;
+  height: 18px;
+  width: 18px;
+}
+
+.fixture-brand-badge-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
