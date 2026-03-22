@@ -53,8 +53,8 @@ packages/
 
 This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
-- `.github/workflows/ci-verify.yml`: a reusable CI verification workflow.
-- `.github/workflows/pages-deploy.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
+- `.github/workflows/verify.yml`: a reusable CI verification workflow.
+- `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
 - `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
 
@@ -152,7 +152,7 @@ npm run build
 Reusable workflow path:
 
 ```text
-.github/workflows/pages-deploy.yml
+.github/workflows/deploy-pages.yml
 ```
 
 The workflow accepts these inputs:
@@ -181,7 +181,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: ttvance/tv-shared/.github/workflows/pages-deploy.yml@main
+    uses: ttvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
       node-version: '20'
       working-directory: .
@@ -197,7 +197,7 @@ jobs:
 Reusable CI workflow path:
 
 ```text
-.github/workflows/ci-verify.yml
+.github/workflows/verify.yml
 ```
 
 The recommended consumer contract is documented in:

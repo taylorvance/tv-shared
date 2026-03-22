@@ -27,24 +27,24 @@ Make `tv-shared` the source of truth for:
 
 Refactor targets:
 - replace inline header mark with `TvProgramsMark` or the shared raw asset
-- replace repo-local deploy workflow with `pages-deploy.yml`
-- add CI workflow using `ci-verify.yml`
+- replace repo-local deploy workflow with `deploy-pages.yml`
+- add CI workflow using `verify.yml`
 - add a `verify` script
 
 ### `mcts-web`
 
 Refactor targets:
 - replace local `BrandBadge` with `@tv-shared/ui`
-- replace custom CI YAML with `ci-verify.yml`
-- replace third-party Pages deploy action with `pages-deploy.yml`
+- replace custom CI YAML with `verify.yml`
+- replace third-party Pages deploy action with `deploy-pages.yml`
 - consider adding `verify` as the canonical local gate
 
 ### `wordlink`
 
 Refactor targets:
 - replace local `BrandBadge` with `@tv-shared/ui`
-- replace repo-local deploy YAML with `pages-deploy.yml`
-- add CI workflow using `ci-verify.yml`
+- replace repo-local deploy YAML with `deploy-pages.yml`
+- add CI workflow using `verify.yml`
 - add `verify` and local hook setup once command conventions are settled
 
 ## Migration principle

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    uses: ./.github/workflows/ci-verify.yml
+    uses: ./.github/workflows/verify.yml
     with:
       node-version: '20'
       working-directory: .

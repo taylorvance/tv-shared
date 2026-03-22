@@ -31,8 +31,8 @@ Suggested shape:
 ## Reusable workflows
 
 Consumers should call these workflows from this repo:
-- `tv-shared/.github/workflows/ci-verify.yml`
-- `tv-shared/.github/workflows/pages-deploy.yml`
+- `tv-shared/.github/workflows/verify.yml`
+- `tv-shared/.github/workflows/deploy-pages.yml`
 
 Example CI workflow:
 
@@ -49,7 +49,7 @@ permissions:
 
 jobs:
   verify:
-    uses: ttvance/tv-shared/.github/workflows/ci-verify.yml@main
+    uses: ttvance/tv-shared/.github/workflows/verify.yml@main
     with:
       node-version: '20'
       working-directory: .
@@ -76,7 +76,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: ttvance/tv-shared/.github/workflows/pages-deploy.yml@main
+    uses: ttvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
       node-version: '20'
       working-directory: .
