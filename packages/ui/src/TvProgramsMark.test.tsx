@@ -16,4 +16,12 @@ describe('TvProgramsMark', () => {
 
     expect(screen.getByRole('img', { name: 'TV Programs' })).toBeInTheDocument();
   });
+
+  it('renders the transformed path group from the shared source asset', () => {
+    const { container } = render(<TvProgramsMark data-testid="mark" />);
+    const group = container.querySelector('svg > g');
+
+    expect(group).toHaveAttribute('transform', 'translate(0,998) scale(0.1,-0.1)');
+    expect(group).toHaveAttribute('fill', 'currentColor');
+  });
 });

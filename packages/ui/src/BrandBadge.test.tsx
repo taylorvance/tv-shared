@@ -7,12 +7,14 @@ describe('BrandBadge', () => {
     render(<BrandBadge />);
 
     const link = screen.getByRole('link', { name: 'tvprograms.tech' });
+    const iconSlot = link.querySelector(`.${brandBadgeClassNames.icon}`);
 
     expect(link).toHaveAttribute('href', 'https://tvprograms.tech');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noreferrer');
     expect(link).toHaveClass(brandBadgeClassNames.root);
     expect(link.style.display).toBe('inline-flex');
+    expect(iconSlot).toHaveStyle({ color: 'inherit' });
   });
 
   it('supports unstyled usage with consumer-owned classes', () => {

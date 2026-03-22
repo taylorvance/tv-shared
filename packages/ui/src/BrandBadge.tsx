@@ -23,6 +23,7 @@ const DEFAULT_ROOT_STYLE: CSSProperties = {
 };
 
 const DEFAULT_ICON_STYLE: CSSProperties = {
+  color: 'inherit',
   display: 'block',
   flexShrink: 0,
   height: '1rem',
