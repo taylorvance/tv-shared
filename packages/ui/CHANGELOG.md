@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-ui
 
+## 0.1.2
+
+### Patch Changes
+
+- 34a849a: Add repository metadata required for npm trusted publishing provenance.
+
 ## 0.1.1
 
 ### Patch Changes
