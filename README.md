@@ -259,7 +259,7 @@ Key scripts:
 The release workflow:
 - verifies the repo on every `main` push
 - creates and pushes a version commit when pending changesets exist
-- publishes `@taylorvance/tv-shared-ui` from the follow-up version-commit run using npm trusted publishing via GitHub OIDC
+- publishes `@taylorvance/tv-shared-ui` in that same run using npm trusted publishing via GitHub OIDC
 
 ## Local hooks
 

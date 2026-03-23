@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { PlainCssBrandBadge } from './plain-css/PlainCssBrandBadge.js';
 import { UtilityClassBrandBadge } from './utility-classes/UtilityClassBrandBadge.js';

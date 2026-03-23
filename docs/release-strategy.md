@@ -46,7 +46,7 @@ Release authentication model:
 Workflow behavior:
 - on `main`, verify the repo first
 - if unreleased changesets exist, create and push a version commit directly to `main`
-- after that version commit lands, the follow-up release run publishes `@taylorvance/tv-shared-ui` to npm
+- in that same release run, publish `@taylorvance/tv-shared-ui` to npm
 
 Changeset rule for this repo:
 - when a change affects the published package `@taylorvance/tv-shared-ui`, add a Changeset in the same change unless the user explicitly says not to
@@ -56,6 +56,7 @@ Release model for this repo:
 - no manual release PR merge
 - pushes to `main` remain the release trigger
 - Changesets still define semver intent
+- versioning and publish happen in one workflow run
 
 ## Trusted publishing setup
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrandBadge } from '../../packages/ui/src/index.js';
 
 export function UtilityClassBrandBadge() {
