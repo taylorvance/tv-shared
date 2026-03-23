@@ -1,6 +1,6 @@
 {
   "name": "@taylorvance/tv-shared-ui",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "Shared React UI primitives for Taylor Vance portfolio projects.",
   "type": "module",
   "sideEffects": false,

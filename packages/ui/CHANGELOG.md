@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- f77e8aa: Remove raw asset URL helpers from the package root export and expose them from the explicit `./assets` subpath. Add an explicit `./BrandBadge` subpath export for consumers that want a component-only entry.
+
 ## 0.1.4
 
 ### Patch Changes
