@@ -170,7 +170,7 @@ The repo now verifies itself with:
 
 Local hooks are also configured:
 - `pre-commit`: `lint-staged`
-- `pre-push`: check the upstream branch, then run `npm run verify:push`
+- `pre-push`: check the upstream branch, run `npm run verify`, then check upstream again
 
 ## GitHub Pages workflow
 
@@ -298,7 +298,7 @@ This repo uses local hook automation through `simple-git-hooks`.
 
 Current hook behavior:
 - `pre-commit`: run `lint-staged`
-- `pre-push`: fail if the branch is behind its upstream, then run `npm run verify:push`
+- `pre-push`: fail if the branch is behind its upstream, run `npm run verify`, then fail again if the upstream moved during verification
 
 ## Consumer repos to inspect before changing shared code
 

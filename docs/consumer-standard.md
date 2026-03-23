@@ -164,7 +164,7 @@ Hooks should stay local to each consumer repo. The shared contract is what they 
 
 Recommended setup:
 - `pre-commit`: run `lint-staged`
-- `pre-push`: optionally fail if the branch is behind its upstream, then run `npm run verify:push`
+- `pre-push`: optionally fail if the branch is behind its upstream, run `npm run verify`, then fail again if the upstream moved during verification
 
 Recommended tools:
 - `simple-git-hooks`
@@ -176,7 +176,7 @@ Suggested package.json additions:
 {
   "scripts": {
     "verify": "npm run lint && npm run test && npm run build",
-    "verify:push": "node scripts/pre-push-check.mjs && npm run verify",
+    "verify:push": "node scripts/pre-push-check.mjs && npm run verify && node scripts/pre-push-check.mjs",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {

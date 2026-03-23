@@ -21,7 +21,7 @@
     "test:dist": "node scripts/smoke-test-ui-dist.mjs",
     "version-packages": "changeset version && npm install --package-lock-only",
     "verify": "npm run lint && npm run test && npm run build && npm run build:host && npm run test:dist",
-    "verify:push": "node scripts/pre-push-check.mjs && npm run verify"
+    "verify:push": "node scripts/pre-push-check.mjs && npm run verify && node scripts/pre-push-check.mjs"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",
