@@ -3,20 +3,24 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "npm run build --workspace @taylorvance/tv-shared-ui",
+    "build:host": "npm run build --workspace @tv-shared/playground",
     "build:ui": "npm run build --workspace @taylorvance/tv-shared-ui",
     "changeset": "changeset",
+    "dev:host": "concurrently -k -n ui,host -c auto \"npm run dev --workspace @taylorvance/tv-shared-ui\" \"npm run dev --workspace @tv-shared/playground -- --host\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "preview:host": "npm run preview --workspace @tv-shared/playground -- --host",
     "prepare": "simple-git-hooks",
     "release": "npm run build && changeset publish",
     "test": "vitest run",
     "test:dist": "node scripts/smoke-test-ui-dist.mjs",
     "version-packages": "changeset version && npm install --package-lock-only",
-    "verify": "npm run lint && npm run test && npm run build && npm run test:dist"
+    "verify": "npm run lint && npm run test && npm run build && npm run build:host && npm run test:dist"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",
@@ -32,6 +36,7 @@
     "@testing-library/react": "^16.1.0",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
     "jsdom": "^25.0.1",

@@ -53,6 +53,7 @@ packages/
 
 This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
+- `apps/playground`: a local example consumer for live UI development.
 - `.github/workflows/verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
 - `.github/workflows/release.yml`: a Changesets-based release workflow for `@taylorvance/tv-shared-ui`.
@@ -150,9 +151,18 @@ npm install
 npm run verify
 ```
 
+For live visual development:
+
+```bash
+npm run dev:host
+```
+
+The playground is a real local consumer app under `apps/playground`. `npm run dev:host` now runs both the UI package watcher and the Vite app, so edits in `packages/ui` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
+
 The repo now verifies itself with:
 - ESLint
 - Vitest component tests
+- a built example consumer app under `apps/playground`
 - internal consumer fixtures for plain CSS and utility-class usage
 - a built-package smoke test against `packages/ui/dist`
 
