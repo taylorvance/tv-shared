@@ -86,6 +86,10 @@ select {
   padding: 1.25rem;
 }
 
+.regression-card {
+  grid-column: 1 / -1;
+}
+
 .demo-card h2 {
   font-size: 1rem;
 }
@@ -135,9 +139,57 @@ select {
   width: 42px;
 }
 
+.asset-row {
+  align-items: flex-start;
+}
+
+.asset-preview {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: center;
+  margin: 0;
+}
+
+.asset-preview figcaption {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .mark-row {
   color: #be123c;
   font-weight: 700;
+}
+
+.regression-stack {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.regression-case {
+  align-items: center;
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 16px;
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem;
+}
+
+.case-label {
+  color: #475569;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dark-case {
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.2), transparent 40%),
+    linear-gradient(135deg, #0f172a, #1e293b);
 }
 
 @media (max-width: 640px) {

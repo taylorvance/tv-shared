@@ -38,6 +38,16 @@ describe('BrandBadge', () => {
     expect(iconSlot).not.toHaveAttribute('style');
   });
 
+  it('keeps the default mark at a sane size in unstyled mode', () => {
+    render(<BrandBadge unstyled />);
+
+    const link = screen.getByRole('link', { name: 'tvprograms.tech' });
+    const mark = link.querySelector('svg');
+
+    expect(mark).toHaveAttribute('height', '1em');
+    expect(mark).toHaveAttribute('width', '1em');
+  });
+
   it('allows consumer overrides for href and label', () => {
     render(<BrandBadge href="https://example.com" label="Example" target="_self" />);
 

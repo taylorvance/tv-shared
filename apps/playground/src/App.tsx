@@ -1,8 +1,10 @@
 import {
-  BrandBadge,
+  TVPROGRAMS_MARK_PNG_URL,
   TVPROGRAMS_MARK_SVG_URL,
+  BrandBadge,
   TvProgramsMark,
 } from '@taylorvance/tv-shared-ui';
+import tvMarkSubpathUrl from '@taylorvance/tv-shared-ui/tv.svg';
 
 function App() {
   return (
@@ -41,13 +43,32 @@ function App() {
 
         <article className="demo-card">
           <h2>Raw Assets</h2>
-          <p>Validate the asset export path a consumer would use.</p>
-          <div className="demo-row">
-            <img
-              src={TVPROGRAMS_MARK_SVG_URL}
-              alt="TV Programs mark"
-              className="asset-mark"
-            />
+          <p>Validate URL constants and raw subpath imports a consumer could use.</p>
+          <div className="demo-row asset-row">
+            <figure className="asset-preview">
+              <img
+                src={TVPROGRAMS_MARK_SVG_URL}
+                alt="TV Programs mark SVG"
+                className="asset-mark"
+              />
+              <figcaption>SVG export</figcaption>
+            </figure>
+            <figure className="asset-preview">
+              <img
+                src={TVPROGRAMS_MARK_PNG_URL}
+                alt="TV Programs mark PNG"
+                className="asset-mark"
+              />
+              <figcaption>PNG export</figcaption>
+            </figure>
+            <figure className="asset-preview">
+              <img
+                src={tvMarkSubpathUrl}
+                alt="TV Programs mark via subpath import"
+                className="asset-mark"
+              />
+              <figcaption>Subpath import</figcaption>
+            </figure>
           </div>
         </article>
 
@@ -57,6 +78,29 @@ function App() {
           <div className="demo-row mark-row">
             <TvProgramsMark title="TV Programs" className="component-mark" />
             <span>Inherited color test</span>
+          </div>
+        </article>
+
+        <article className="demo-card regression-card">
+          <h2>Consumer Regression Cases</h2>
+          <p>Stress the shared badge with small but realistic consumer variations.</p>
+          <div className="regression-stack">
+            <div className="regression-case">
+              <span className="case-label">Long label</span>
+              <BrandBadge label="tvprograms.tech shared package preview build" />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">Custom href</span>
+              <BrandBadge href="https://example.com/demo" label="example.com/demo" />
+            </div>
+            <div className="regression-case dark-case">
+              <span className="case-label">Dark surface</span>
+              <BrandBadge />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">Unstyled fallback</span>
+              <BrandBadge unstyled label="Unstyled badge" />
+            </div>
           </div>
         </article>
       </section>

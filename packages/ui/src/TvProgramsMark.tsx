@@ -5,7 +5,9 @@ export type TvProgramsMarkProps = Omit<ComponentPropsWithoutRef<'svg'>, 'childre
 };
 
 export function TvProgramsMark({
+  height = '1em',
   title,
+  width = '1em',
   ...props
 }: TvProgramsMarkProps) {
   const accessibleProps = title
@@ -14,7 +16,9 @@ export function TvProgramsMark({
 
   return (
     <svg
+      height={height}
       viewBox="0 0 998 998"
+      width={width}
       xmlns="http://www.w3.org/2000/svg"
       {...accessibleProps}
       {...props}
