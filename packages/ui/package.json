@@ -13,6 +13,16 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./BrandBadge": {
+      "types": "./dist/BrandBadge.d.ts",
+      "import": "./dist/BrandBadge.js",
+      "default": "./dist/BrandBadge.js"
+    },
+    "./assets": {
+      "types": "./dist/assets.d.ts",
+      "import": "./dist/assets.js",
+      "default": "./dist/assets.js"
+    },
     "./tv.svg": "./assets/tv.svg",
     "./tv.png": "./assets/tv.png"
   },

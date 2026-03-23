@@ -2,16 +2,21 @@
 
 Shared React UI primitives for Taylor Vance portfolio projects.
 
-## Current exports
+## Public API
+
+Root exports:
 
 - `BrandBadge`
 - `TvProgramsMark`
-- `TVPROGRAMS_MARK_SVG_URL`
-- `TVPROGRAMS_MARK_PNG_URL`
 - `TVPROGRAMS_URL`
 - `TVPROGRAMS_HOSTNAME`
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
+
+Explicit subpaths:
+
+- `@taylorvance/tv-shared-ui/BrandBadge`
+- `@taylorvance/tv-shared-ui/assets`
 
 ## Design goals
 
@@ -30,6 +35,12 @@ import { BrandBadge } from '@taylorvance/tv-shared-ui';
 export function Footer() {
   return <BrandBadge />;
 }
+```
+
+Explicit component-only entry:
+
+```tsx
+import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
 ```
 
 Consumer-owned styling:
@@ -60,7 +71,7 @@ import { TvProgramsMark } from '@taylorvance/tv-shared-ui';
 URL exports:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui/assets';
 ```
 
 Raw asset subpaths:

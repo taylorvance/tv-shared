@@ -68,15 +68,19 @@ This repo now contains:
 
 ### Exports
 
-`@taylorvance/tv-shared-ui` currently exports:
+`@taylorvance/tv-shared-ui` currently exposes:
+
+Root exports:
 - `BrandBadge`
 - `TvProgramsMark`
-- `TVPROGRAMS_MARK_SVG_URL`
-- `TVPROGRAMS_MARK_PNG_URL`
 - `TVPROGRAMS_URL`
 - `TVPROGRAMS_HOSTNAME`
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
+
+Explicit subpaths:
+- `@taylorvance/tv-shared-ui/BrandBadge`
+- `@taylorvance/tv-shared-ui/assets`
 
 ### `BrandBadge`
 
@@ -116,6 +120,12 @@ export function Footer() {
 
 The stable class hooks are also exported via `brandBadgeClassNames` for CSS consumers that want library-provided slot names.
 
+Consumers that want an explicit component-only entry can also import:
+
+```tsx
+import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
+```
+
 ### Raw logo assets
 
 For cases that need an image URL rather than a React component, the package now exposes the TV mark in two ways.
@@ -123,7 +133,7 @@ For cases that need an image URL rather than a React component, the package now 
 Bundler-friendly URL constants:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui/assets';
 
 export function HeaderLogo() {
   return <img src={TVPROGRAMS_MARK_SVG_URL} alt="TV Programs" />;

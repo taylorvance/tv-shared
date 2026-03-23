@@ -1,9 +1,11 @@
 import {
-  TVPROGRAMS_MARK_PNG_URL,
-  TVPROGRAMS_MARK_SVG_URL,
-  BrandBadge,
   TvProgramsMark,
 } from '@taylorvance/tv-shared-ui';
+import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
+import {
+  TVPROGRAMS_MARK_PNG_URL,
+  TVPROGRAMS_MARK_SVG_URL,
+} from '@taylorvance/tv-shared-ui/assets';
 import tvMarkSubpathUrl from '@taylorvance/tv-shared-ui/tv.svg';
 
 function App() {
