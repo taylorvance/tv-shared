@@ -42,15 +42,29 @@ jobs:
       - name: Determine release mode
         id: release_mode
         run: |
+          PACKAGE_NAME="$(node -p "require('./packages/ui/package.json').name")"
+          PACKAGE_VERSION="$(node -p "require('./packages/ui/package.json').version")"
+
+          echo "package_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "package_version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+
           if find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | grep -q .; then
-            echo "should_release=true" >> "$GITHUB_OUTPUT"
+            echo "should_version=true" >> "$GITHUB_OUTPUT"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "should_release=false" >> "$GITHUB_OUTPUT"
+          echo "should_version=false" >> "$GITHUB_OUTPUT"
+
+          if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version >/dev/null 2>&1; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "should_publish=true" >> "$GITHUB_OUTPUT"
 
       - name: Version packages and push
-        if: steps.release_mode.outputs.should_release == 'true'
+        if: steps.release_mode.outputs.should_version == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -68,5 +82,5 @@ jobs:
           git push origin HEAD:main
 
       - name: Publish package
-        if: steps.release_mode.outputs.should_release == 'true'
+        if: steps.release_mode.outputs.should_publish == 'true'
         run: npm run release

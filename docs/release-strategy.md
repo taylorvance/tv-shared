@@ -46,7 +46,8 @@ Release authentication model:
 Workflow behavior:
 - on `main`, verify the repo first
 - if unreleased changesets exist, create and push a version commit directly to `main`
-- in that same release run, publish `@taylorvance/tv-shared-ui` to npm
+- if the current package version is not yet on npm, publish it in that same release run
+- if the current package version is already on npm and no changesets remain, do nothing
 
 Changeset rule for this repo:
 - when a change affects the published package `@taylorvance/tv-shared-ui`, add a Changeset in the same change unless the user explicitly says not to
