@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-ui
 
+## 0.1.3
+
+### Patch Changes
+
+- 15f28a5: Fix package export metadata so Vite-based consumers can resolve the package correctly during development.
+
 ## 0.1.2
 
 ### Patch Changes
