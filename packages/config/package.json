@@ -1,0 +1,37 @@
+{
+  "name": "@taylorvance/tv-shared-config",
+  "version": "0.1.0",
+  "description": "Shared ESLint, Prettier, and TypeScript config presets for Taylor Vance portfolio projects.",
+  "type": "module",
+  "exports": {
+    "./eslint/base": "./eslint/base.mjs",
+    "./eslint/react-app": "./eslint/react-app.mjs",
+    "./prettier": "./prettier/index.mjs",
+    "./tsconfig/react-app.json": "./tsconfig/react-app.json",
+    "./tsconfig/vite-node.json": "./tsconfig/vite-node.json"
+  },
+  "files": [
+    "eslint",
+    "prettier",
+    "tsconfig",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taylorvance/tv-shared",
+    "directory": "packages/config"
+  },
+  "peerDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0 || ^7.0.0",
+    "eslint-plugin-react-refresh": "^0.4.0",
+    "globals": "^15.0.0 || ^16.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}

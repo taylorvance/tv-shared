@@ -53,12 +53,14 @@ packages/
 
 This repo now contains:
 - `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
+- `packages/config`: shared ESLint, Prettier, and TypeScript config presets for portfolio consumers.
 - `apps/playground`: a local example consumer for live UI development.
 - `.github/workflows/verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
 - `.github/workflows/release.yml`: a Changesets-based release workflow for `@taylorvance/tv-shared-ui`.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
 - `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
+- `docs/package-checklist.md`: the checklist for creating and publishing future shared packages.
 - `docs/release-strategy.md`: the release/versioning guidance for package adoption.
 - `docs/examples/`: copyable consumer workflow wrappers.
 
@@ -251,6 +253,25 @@ Example copyable wrapper file:
 ```text
 docs/examples/ci.yml
 ```
+
+## Shared config packages
+
+This repo now also provides one small shared config package for consumer repos:
+- `@taylorvance/tv-shared-config`
+
+These packages are meant to standardize the boring baseline across portfolio apps:
+- ESLint flat config wiring
+- React hooks / Vite refresh lint rules
+- TypeScript bundler-mode defaults for Vite React apps
+- TypeScript Node-side defaults for `vite.config.ts`
+
+They intentionally do not own consumer-specific settings such as path aliases, generated-data ignores, or special compiler flags needed by only one app.
+
+Recommended consumer docs:
+- `docs/consumer-standard.md`
+- `docs/examples/eslint.config.mjs`
+- `docs/examples/tsconfig.app.json`
+- `docs/examples/tsconfig.node.json`
 
 ## Release automation
 

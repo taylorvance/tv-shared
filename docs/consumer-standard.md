@@ -28,6 +28,73 @@ Suggested shape:
 }
 ```
 
+## Shared config packages
+
+Consumers should standardize on the shared config package from this repo:
+- `@taylorvance/tv-shared-config`
+
+Install it from npm in consumer repos:
+
+```json
+{
+  "devDependencies": {
+    "@taylorvance/tv-shared-config": "^0.1.0"
+  }
+}
+```
+
+Recommended ESLint setup for Vite + React apps:
+
+```js
+import defineReactAppConfig from '@taylorvance/tv-shared-config/eslint/react-app'
+
+export default defineReactAppConfig()
+```
+
+Recommended TypeScript setup:
+
+```json
+{
+  "extends": "@taylorvance/tv-shared-config/tsconfig/react-app.json",
+  "compilerOptions": {
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}
+```
+
+Recommended Prettier setup:
+
+```js
+import prettierConfig from '@taylorvance/tv-shared-config/prettier'
+
+export default prettierConfig
+```
+
+```json
+{
+  "extends": "@taylorvance/tv-shared-config/tsconfig/vite-node.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
+  },
+  "include": ["vite.config.ts"]
+}
+```
+
+Consumer-owned settings should stay local:
+- `baseUrl`
+- `paths`
+- test globals and other repo-specific `types`
+- generated-file ignores such as `public/generated/**`
+- niche compiler flags that only one app needs
+
+Copyable examples live in:
+- `docs/examples/eslint.config.mjs`
+- `docs/examples/prettier.config.mjs`
+- `docs/examples/tsconfig.app.json`
+- `docs/examples/tsconfig.node.json`
+
 ## Reusable workflows
 
 Consumers should call these workflows from this repo:
