@@ -20,11 +20,12 @@
     "test": "vitest run",
     "test:dist": "node scripts/smoke-test-ui-dist.mjs",
     "version-packages": "changeset version && npm install --package-lock-only",
-    "verify": "npm run lint && npm run test && npm run build && npm run build:host && npm run test:dist"
+    "verify": "npm run lint && npm run test && npm run build && npm run build:host && npm run test:dist",
+    "verify:push": "node scripts/pre-push-check.mjs && npm run verify"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",
-    "pre-push": "npm run verify"
+    "pre-push": "npm run verify:push"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx}": "eslint --fix"

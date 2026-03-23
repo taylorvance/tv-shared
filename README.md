@@ -170,7 +170,7 @@ The repo now verifies itself with:
 
 Local hooks are also configured:
 - `pre-commit`: `lint-staged`
-- `pre-push`: `npm run verify`
+- `pre-push`: check the upstream branch, then run `npm run verify:push`
 
 ## GitHub Pages workflow
 
@@ -290,7 +290,7 @@ Key scripts:
 The release workflow:
 - verifies the repo on every `main` push
 - creates and pushes a version commit when pending changesets exist
-- publishes `@taylorvance/tv-shared-ui` in that same run using npm trusted publishing via GitHub OIDC
+- publishes changed packages in that same run using npm trusted publishing via GitHub OIDC
 
 ## Local hooks
 
@@ -298,7 +298,7 @@ This repo uses local hook automation through `simple-git-hooks`.
 
 Current hook behavior:
 - `pre-commit`: run `lint-staged`
-- `pre-push`: run `npm run verify`
+- `pre-push`: fail if the branch is behind its upstream, then run `npm run verify:push`
 
 ## Consumer repos to inspect before changing shared code
 
