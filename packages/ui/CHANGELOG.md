@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-ui
 
+## 0.1.4
+
+### Patch Changes
+
+- ffc3622: Fix the default TV Programs mark size so `BrandBadge` stays usable in unstyled mode.
+
 ## 0.1.3
 
 ### Patch Changes
