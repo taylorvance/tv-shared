@@ -120,7 +120,7 @@ permissions:
 
 jobs:
   verify:
-    uses: ttvance/tv-shared/.github/workflows/verify.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/verify.yml@main
     with:
       node-version: '20'
       working-directory: .
@@ -147,7 +147,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: ttvance/tv-shared/.github/workflows/deploy-pages.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
       node-version: '20'
       working-directory: .

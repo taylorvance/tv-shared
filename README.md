@@ -216,7 +216,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: ttvance/tv-shared/.github/workflows/deploy-pages.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
       node-version: '20'
       working-directory: .
