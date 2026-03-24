@@ -5,12 +5,14 @@ This repo defines the shared contract for portfolio-project consumers.
 ## Gold standard
 
 Each consumer repo should expose these scripts when practical:
+- `npm run dev`
 - `npm run lint`
 - `npm run test`
 - `npm run build`
 - `npm run verify`
 
 Recommended behavior:
+- `dev` should be the default local entrypoint. For Vite apps that need LAN or Tailscale access, prefer folding host binding into `dev` instead of maintaining a separate `dev:host`.
 - `build` must include any preprocess step the app needs.
 - `test` must be non-watch in CI. If the repo keeps `vitest` in watch mode locally, the workflow should pass an explicit CI-safe command such as `npm test -- --run`.
 - `verify` should be the full local quality gate: lint, test, then build.
@@ -20,6 +22,7 @@ Suggested shape:
 ```json
 {
   "scripts": {
+    "dev": "vite --host",
     "lint": "eslint .",
     "test": "vitest --run",
     "build": "tsc -b && vite build",

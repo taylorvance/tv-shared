@@ -11,7 +11,7 @@
     "build:host": "npm run build --workspace @tv-shared/playground",
     "build:ui": "npm run build --workspace @taylorvance/tv-shared-ui",
     "changeset": "changeset",
-    "dev:host": "concurrently -k -n ui,host -c auto \"npm run dev --workspace @taylorvance/tv-shared-ui\" \"npm run dev --workspace @tv-shared/playground -- --host\"",
+    "dev": "concurrently -k -n ui,host -c auto \"npm run dev --workspace @taylorvance/tv-shared-ui\" \"npm run dev --workspace @tv-shared/playground -- --host\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview:host": "npm run preview --workspace @tv-shared/playground -- --host",

@@ -166,10 +166,10 @@ npm run verify
 For live visual development:
 
 ```bash
-npm run dev:host
+npm run dev
 ```
 
-The playground is a real local consumer app under `apps/playground`. `npm run dev:host` now runs both the UI package watcher and the Vite app, so edits in `packages/ui` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
+The playground is a real local consumer app under `apps/playground`. `npm run dev` now runs both the UI package watcher and the Vite app, so edits in `packages/ui` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
 
 The repo now verifies itself with:
 - ESLint
