@@ -247,6 +247,7 @@ The recommended consumer contract is documented in:
 - `docs/release-strategy.md`
 
 At a minimum, future consumers should converge on:
+- `clean`
 - `lint`
 - `test`
 - `build`

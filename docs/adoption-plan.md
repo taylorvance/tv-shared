@@ -13,7 +13,7 @@ Make `tv-shared` the source of truth for:
    Start with `BrandBadge`, `TvProgramsMark`, shared logo assets, and reusable workflows.
 
 2. Normalize consumer scripts.
-   Every consumer should converge on `lint`, `test`, `build`, and `verify`.
+   Every consumer should converge on `clean`, `lint`, `test`, `build`, and `verify`.
 
 3. Replace per-repo CI and deploy YAML with `workflow_call` wrappers.
    Consumers should keep thin repo-local workflow files that call `tv-shared`.

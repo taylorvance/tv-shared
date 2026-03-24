@@ -5,6 +5,7 @@ This repo defines the shared contract for portfolio-project consumers.
 ## Gold standard
 
 Each consumer repo should expose these scripts when practical:
+- `npm run clean`
 - `npm run dev`
 - `npm run lint`
 - `npm run test`
@@ -12,6 +13,7 @@ Each consumer repo should expose these scripts when practical:
 - `npm run verify`
 
 Recommended behavior:
+- `clean` should remove dependency installs, build artifacts, caches, and other reproducible generated files.
 - `dev` should be the default local entrypoint. For Vite apps that need LAN or Tailscale access, prefer folding host binding into `dev` instead of maintaining a separate `dev:host`.
 - `build` must include any preprocess step the app needs.
 - `test` must be non-watch in CI. If the repo keeps `vitest` in watch mode locally, the workflow should pass an explicit CI-safe command such as `npm test -- --run`.
@@ -22,11 +24,24 @@ Suggested shape:
 ```json
 {
   "scripts": {
+    "clean": "rm -rf node_modules dist coverage .vite .eslintcache *.tsbuildinfo",
     "dev": "vite --host",
     "lint": "eslint .",
     "test": "vitest --run",
     "build": "tsc -b && vite build",
     "verify": "npm run lint && npm run test && npm run build"
+  }
+}
+```
+
+For workspace repos, prefer a root dispatcher plus package-local `clean` scripts:
+
+```json
+{
+  "scripts": {
+    "clean": "npm run clean:workspaces && npm run clean:root",
+    "clean:root": "rm -rf node_modules coverage .turbo .vite .eslintcache *.tsbuildinfo",
+    "clean:workspaces": "npm run clean --workspaces --if-present"
   }
 }
 ```

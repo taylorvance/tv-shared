@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "build": "node ../../scripts/build-ui-package.mjs",
+    "clean": "rm -rf dist node_modules coverage .vite .eslintcache *.tsbuildinfo",
     "dev": "npm run build && tsc --watch --preserveWatchOutput -p tsconfig.json"
   },
   "publishConfig": {

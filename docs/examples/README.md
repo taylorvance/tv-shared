@@ -8,6 +8,7 @@ Recommended convention:
 - only override inputs that differ per repo
 
 The examples assume the consumer repo already exposes:
+- `npm run clean`
 - `npm run lint`
 - `npm run test` or a CI-safe equivalent
 - `npm run build`

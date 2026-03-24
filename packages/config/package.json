@@ -16,6 +16,9 @@
     "tsconfig",
     "README.md"
   ],
+  "scripts": {
+    "clean": "rm -rf dist node_modules coverage .vite .eslintcache *.tsbuildinfo"
+  },
   "publishConfig": {
     "access": "public"
   },

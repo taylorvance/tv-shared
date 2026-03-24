@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf dist node_modules coverage .vite .eslintcache *.tsbuildinfo",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
