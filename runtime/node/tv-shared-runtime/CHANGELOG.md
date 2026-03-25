@@ -1,4 +1,4 @@
-# @taylorvance/tv-shared-ui
+# @taylorvance/tv-shared-runtime
 
 ## 0.2.0
 

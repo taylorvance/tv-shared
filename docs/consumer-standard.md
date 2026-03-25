@@ -46,35 +46,68 @@ For workspace repos, prefer a root dispatcher plus package-local `clean` scripts
 }
 ```
 
-## Shared config packages
+## Node tooling baselines
 
-Consumers should standardize on the shared config package from this repo:
-- `@taylorvance/tv-shared-config`
-
-Install it from npm in consumer repos:
-
-```json
-{
-  "devDependencies": {
-    "@taylorvance/tv-shared-config": "^0.1.0"
-  }
-}
-```
+Consumers should copy and adapt the Node tooling baselines from this repo rather than depending on a shared config package.
 
 Recommended ESLint setup for Vite + React apps:
 
 ```js
-import defineReactAppConfig from '@taylorvance/tv-shared-config/eslint/react-app'
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
 
-export default defineReactAppConfig()
+export default tseslint.config(
+  { ignores: ['dist/**'] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: { jsx: true }
+      },
+      globals: {
+        ...globals.browser
+      }
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh
+    },
+    rules: {
+      ...reactHooks.configs.flat.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'no-undef': 'off'
+    }
+  }
+)
 ```
 
 Recommended TypeScript setup:
 
 ```json
 {
-  "extends": "@taylorvance/tv-shared-config/tsconfig/react-app.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
     "types": ["vite/client"]
   },
   "include": ["src"]
@@ -84,15 +117,29 @@ Recommended TypeScript setup:
 Recommended Prettier setup:
 
 ```js
-import prettierConfig from '@taylorvance/tv-shared-config/prettier'
+const prettierConfig = {
+  semi: true,
+  singleQuote: true,
+  trailingComma: 'all'
+}
 
 export default prettierConfig
 ```
 
+Recommended Node-side TypeScript setup:
+
 ```json
 {
-  "extends": "@taylorvance/tv-shared-config/tsconfig/vite-node.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
   },
@@ -108,10 +155,10 @@ Consumer-owned settings should stay local:
 - niche compiler flags that only one app needs
 
 Copyable examples live in:
-- `docs/examples/eslint.config.mjs`
-- `docs/examples/prettier.config.mjs`
-- `docs/examples/tsconfig.app.json`
-- `docs/examples/tsconfig.node.json`
+- `tooling/node/examples/eslint.config.mjs`
+- `tooling/node/examples/prettier.config.mjs`
+- `tooling/node/examples/tsconfig.app.json`
+- `tooling/node/examples/tsconfig.node.json`
 
 ## Reusable workflows
 

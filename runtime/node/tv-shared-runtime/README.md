@@ -1,6 +1,8 @@
-# `@taylorvance/tv-shared-ui`
+# `@taylorvance/tv-shared-runtime`
 
-Shared React UI primitives for Taylor Vance portfolio projects.
+Shared React runtime primitives for Taylor Vance portfolio projects.
+
+The canonical TV Programs logo files live in the repo-level `assets/` directory and are copied into this package during build so the package can continue to expose raw asset subpaths.
 
 ## Public API
 
@@ -15,8 +17,8 @@ Root exports:
 
 Explicit subpaths:
 
-- `@taylorvance/tv-shared-ui/BrandBadge`
-- `@taylorvance/tv-shared-ui/assets`
+- `@taylorvance/tv-shared-runtime/BrandBadge`
+- `@taylorvance/tv-shared-runtime/assets`
 
 ## Design goals
 
@@ -30,7 +32,7 @@ Explicit subpaths:
 Quick default usage:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime';
 
 export function Footer() {
   return <BrandBadge />;
@@ -40,13 +42,13 @@ export function Footer() {
 Explicit component-only entry:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime/BrandBadge';
 ```
 
 Consumer-owned styling:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime';
 
 export function Footer() {
   return (
@@ -65,17 +67,17 @@ export function Footer() {
 React component:
 
 ```tsx
-import { TvProgramsMark } from '@taylorvance/tv-shared-ui';
+import { TvProgramsMark } from '@taylorvance/tv-shared-runtime';
 ```
 
 URL exports:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui/assets';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-runtime/assets';
 ```
 
 Raw asset subpaths:
 
 ```tsx
-import tvMarkUrl from '@taylorvance/tv-shared-ui/tv.svg';
+import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 ```

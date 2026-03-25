@@ -1,12 +1,12 @@
 import {
   TvProgramsMark,
-} from '@taylorvance/tv-shared-ui';
-import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
+} from '@taylorvance/tv-shared-runtime';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime/BrandBadge';
 import {
   TVPROGRAMS_MARK_PNG_URL,
   TVPROGRAMS_MARK_SVG_URL,
-} from '@taylorvance/tv-shared-ui/assets';
-import tvMarkSubpathUrl from '@taylorvance/tv-shared-ui/tv.svg';
+} from '@taylorvance/tv-shared-runtime/assets';
+import tvMarkSubpathUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <p className="eyebrow">Local Playground</p>
         <h1>Test `tv-shared` like a real consumer.</h1>
         <p className="lede">
-          This app watches local package builds so changes in `packages/ui`
+          This app watches local package builds so changes in `runtime/node/tv-shared-runtime`
           flow into a real consumer app during development.
         </p>
       </section>

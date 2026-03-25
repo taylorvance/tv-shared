@@ -11,5 +11,5 @@ npm run verify
 ```
 
 The GitHub release workflow handles the normal main-branch automation:
-- create or update a release PR when changesets are present
-- publish `@tv-shared/ui` when the release PR lands and `NPM_TOKEN` is available
+- version the published runtime package when changesets are present
+- publish from GitHub Actions using trusted publishing

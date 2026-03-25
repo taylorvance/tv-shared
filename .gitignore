@@ -3,3 +3,4 @@ dist/
 coverage/
 *.tsbuildinfo
 apps/*/dist/
+runtime/node/tv-shared-runtime/assets/

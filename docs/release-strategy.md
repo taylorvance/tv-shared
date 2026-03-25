@@ -2,9 +2,9 @@
 
 ## Current recommendation
 
-Treat `tv-shared` as the source of publishable shared packages for separate consumer repos.
+Treat `tv-shared` as the source of publishable Node runtime packages for separate consumer repos.
 
-Because the consumers build independently in GitHub Actions, published packages are the default model for shared code under `packages/*`.
+Because the consumers build independently in GitHub Actions, published packages are the default model for shared code under `runtime/node/*`.
 
 Use `file:` links only for short-lived local migration or debugging work, not as the long-term installation path.
 
@@ -31,7 +31,7 @@ Workflow behavior:
 - then run `changeset publish` for any unpublished package versions in the repo
 
 Changeset rule for this repo:
-- when a change affects any published package in `packages/*`, add a Changeset in the same change unless the user explicitly says not to
+- when a change affects any published package in `runtime/node/*`, add a Changeset in the same change unless the user explicitly says not to
 - do not add Changesets for docs-only, workflow-only, or internal tooling changes that do not affect the published package
 
 Release model for this repo:

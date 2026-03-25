@@ -57,7 +57,7 @@ jobs:
 
           npm run version-packages
 
-          git add .changeset package-lock.json packages/*/package.json packages/*/CHANGELOG.md
+          git add .changeset package-lock.json runtime/node/*/package.json runtime/node/*/CHANGELOG.md
 
           if git diff --cached --quiet; then
             echo "No version changes were produced."

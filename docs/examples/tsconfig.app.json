@@ -1,7 +1,0 @@
-{
-  "extends": "@taylorvance/tv-shared-config/tsconfig/react-app.json",
-  "compilerOptions": {
-    "types": ["vite/client", "vitest/globals"]
-  },
-  "include": ["src"]
-}

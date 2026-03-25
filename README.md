@@ -1,6 +1,6 @@
 # tv-shared
 
-Shared UI and GitHub Actions infrastructure for Taylor Vance portfolio projects.
+Shared runtime code, tooling, and GitHub workflow infrastructure for Taylor Vance portfolio projects.
 
 This repo is intended to be the source of truth for code reused across:
 - `tvprograms`
@@ -12,10 +12,19 @@ This repo is intended to be the source of truth for code reused across:
 
 The portfolio site should remain an app consumer, not the owner of shared code. Common pieces like the `BrandBadge` and the GitHub Pages deploy pipeline belong in a separate repo so they can be versioned and reused independently.
 
+The repo is organized by delivery mechanism:
+
+- published runtime code under `runtime/<stack>/`
+- reusable workflows in `.github/workflows/`
+- stack-specific tooling assets under `tooling/<stack>/`
+
 ## Initial scope
 
-### UI package
-Create a reusable React package under `packages/ui` for small, stable cross-project components.
+### Runtime
+Keep published application code under `runtime/<stack>/`.
+
+Current runtime package:
+- `runtime/node/tv-shared-runtime`
 
 Initial extraction targets:
 - `BrandBadge`
@@ -28,6 +37,19 @@ Constraints:
 - Support both Tailwind consumers and plain CSS consumers.
 - Do not move project-specific layout, page, or feature components here unless they have at least two real consumers.
 
+### Tooling
+Keep reusable tooling source outside runtime packages.
+
+Current shape:
+
+```text
+runtime/
+  node/
+    tv-shared-runtime/
+tooling/
+  node/
+```
+
 ### GitHub Actions
 Create reusable GitHub workflow(s) under `.github/workflows`.
 
@@ -39,12 +61,14 @@ Constraints:
 - Keep inputs simple: node version, working directory, install command, lint command, test command, build command, artifact path.
 - Use official Pages actions unless there is a clear reason not to.
 
-## Proposed structure
+## Current structure
 
 ```text
-packages/
-  ui/
-    src/
+runtime/
+  node/
+    tv-shared-runtime/
+tooling/
+  node/
 .github/
   workflows/
 ```
@@ -52,23 +76,24 @@ packages/
 ## Current implementation
 
 This repo now contains:
-- `packages/ui`: a small React package exporting `BrandBadge`, `TvProgramsMark`, and shared site constants.
-- `packages/config`: shared ESLint, Prettier, and TypeScript config presets for portfolio consumers.
+- `assets/`: canonical shared static assets such as the TV Programs mark.
+- `runtime/node/tv-shared-runtime`: the published Node runtime package.
+- `tooling/node/`: copyable Node and TypeScript tooling baselines.
 - `apps/playground`: a local example consumer for live UI development.
 - `.github/workflows/verify.yml`: a reusable CI verification workflow.
 - `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
-- `.github/workflows/release.yml`: a Changesets-based release workflow for `@taylorvance/tv-shared-ui`.
-- `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and hooks.
-- `docs/adoption-plan.md`: the forward migration plan for current and future consumers.
-- `docs/package-checklist.md`: the checklist for creating and publishing future shared packages.
-- `docs/release-strategy.md`: the release/versioning guidance for package adoption.
+- `.github/workflows/release.yml`: a Changesets-based release workflow for the published Node runtime package.
+- `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and tooling baselines.
+- `docs/adoption-plan.md`: the current consumer alignment plan.
+- `docs/package-checklist.md`: the checklist for creating and publishing future runtime packages.
+- `docs/release-strategy.md`: the release/versioning guidance for runtime packages in this repo.
 - `docs/examples/`: copyable consumer workflow wrappers.
 
-## UI package
+## Runtime package
 
 ### Exports
 
-`@taylorvance/tv-shared-ui` currently exposes:
+`@taylorvance/tv-shared-runtime` currently exposes:
 
 Root exports:
 - `BrandBadge`
@@ -79,8 +104,8 @@ Root exports:
 - `brandBadgeClassNames`
 
 Explicit subpaths:
-- `@taylorvance/tv-shared-ui/BrandBadge`
-- `@taylorvance/tv-shared-ui/assets`
+- `@taylorvance/tv-shared-runtime/BrandBadge`
+- `@taylorvance/tv-shared-runtime/assets`
 
 ### `BrandBadge`
 
@@ -94,7 +119,7 @@ The extracted badge keeps the shared behavior stable:
 Example with defaults:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime';
 
 export function Footer() {
   return <BrandBadge />;
@@ -104,7 +129,7 @@ export function Footer() {
 Example with app-owned styling:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime';
 
 export function Footer() {
   return (
@@ -123,7 +148,7 @@ The stable class hooks are also exported via `brandBadgeClassNames` for CSS cons
 Consumers that want an explicit component-only entry can also import:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-ui/BrandBadge';
+import { BrandBadge } from '@taylorvance/tv-shared-runtime/BrandBadge';
 ```
 
 ### Raw logo assets
@@ -133,7 +158,7 @@ For cases that need an image URL rather than a React component, the package now 
 Bundler-friendly URL constants:
 
 ```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-ui/assets';
+import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-runtime/assets';
 
 export function HeaderLogo() {
   return <img src={TVPROGRAMS_MARK_SVG_URL} alt="TV Programs" />;
@@ -143,7 +168,7 @@ export function HeaderLogo() {
 Raw asset subpaths:
 
 ```tsx
-import tvMarkUrl from '@taylorvance/tv-shared-ui/tv.svg';
+import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 
 export function HeaderLogo() {
   return <img src={tvMarkUrl} alt="TV Programs" />;
@@ -151,8 +176,18 @@ export function HeaderLogo() {
 ```
 
 Available raw asset subpaths:
-- `@taylorvance/tv-shared-ui/tv.svg`
-- `@taylorvance/tv-shared-ui/tv.png`
+- `@taylorvance/tv-shared-runtime/tv.svg`
+- `@taylorvance/tv-shared-runtime/tv.png`
+
+## Shared assets
+
+Canonical shared asset files live at the repo top level in `assets/`.
+
+Current shared assets:
+- `assets/tv.svg`
+- `assets/tv.png`
+
+The runtime package copies these files into its published package during build so npm consumers can still import them through `@taylorvance/tv-shared-runtime`.
 
 ### Build
 
@@ -169,14 +204,14 @@ For live visual development:
 npm run dev
 ```
 
-The playground is a real local consumer app under `apps/playground`. `npm run dev` now runs both the UI package watcher and the Vite app, so edits in `packages/ui` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
+The playground is a real local consumer app under `apps/playground`. `npm run dev` runs both the runtime package watcher and the Vite app, so edits in `runtime/node/tv-shared-runtime` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
 
 The repo now verifies itself with:
 - ESLint
 - Vitest component tests
 - a built example consumer app under `apps/playground`
 - internal consumer fixtures for plain CSS and utility-class usage
-- a built-package smoke test against `packages/ui/dist`
+- a built-package smoke test against `runtime/node/tv-shared-runtime/dist`
 
 Local hooks are also configured:
 - `pre-commit`: `lint-staged`
@@ -265,24 +300,16 @@ Example copyable wrapper file:
 docs/examples/ci.yml
 ```
 
-## Shared config packages
+## Node tooling
 
-This repo now also provides one small shared config package for consumer repos:
-- `@taylorvance/tv-shared-config`
-
-These packages are meant to standardize the boring baseline across portfolio apps:
-- ESLint flat config wiring
-- React hooks / Vite refresh lint rules
-- TypeScript bundler-mode defaults for Vite React apps
-- TypeScript Node-side defaults for `vite.config.ts`
-
-They intentionally do not own consumer-specific settings such as path aliases, generated-data ignores, or special compiler flags needed by only one app.
+Reusable Node and TypeScript baselines live under `tooling/node/`.
 
 Recommended consumer docs:
 - `docs/consumer-standard.md`
-- `docs/examples/eslint.config.mjs`
-- `docs/examples/tsconfig.app.json`
-- `docs/examples/tsconfig.node.json`
+- `tooling/node/examples/eslint.config.mjs`
+- `tooling/node/examples/prettier.config.mjs`
+- `tooling/node/examples/tsconfig.app.json`
+- `tooling/node/examples/tsconfig.node.json`
 
 ## Release automation
 

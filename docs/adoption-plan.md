@@ -3,7 +3,7 @@
 ## Goal
 
 Make `tv-shared` the source of truth for:
-- reusable UI primitives
+- reusable runtime primitives
 - reusable GitHub workflows
 - consumer quality standards
 
@@ -34,7 +34,7 @@ Refactor targets:
 ### `mcts-web`
 
 Refactor targets:
-- replace local `BrandBadge` with `@taylorvance/tv-shared-ui`
+- replace local `BrandBadge` with `@taylorvance/tv-shared-runtime`
 - replace custom CI YAML with `verify.yml`
 - replace third-party Pages deploy action with `deploy-pages.yml`
 - consider adding `verify` as the canonical local gate
@@ -42,7 +42,7 @@ Refactor targets:
 ### `wordlink`
 
 Refactor targets:
-- replace local `BrandBadge` with `@taylorvance/tv-shared-ui`
+- replace local `BrandBadge` with `@taylorvance/tv-shared-runtime`
 - replace repo-local deploy YAML with `deploy-pages.yml`
 - add CI workflow using `verify.yml`
 - add `verify` and local hook setup once command conventions are settled

@@ -2,7 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/ui"
+      "path": "./runtime/node/tv-shared-runtime"
     }
   ]
 }

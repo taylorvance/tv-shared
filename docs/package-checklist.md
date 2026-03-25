@@ -1,6 +1,6 @@
 # Shared Package Checklist
 
-Use this whenever you add a new shared package in `tv-shared`.
+Use this whenever you add a new published runtime package in `tv-shared`.
 
 ## Default policy
 
@@ -14,15 +14,15 @@ That means:
 ## What this repo owns
 
 This repo owns three different shared surfaces:
-- npm packages under `packages/*`
+- published Node runtime packages under `runtime/node/*`
 - reusable GitHub workflows under `.github/workflows`
 - consumer documentation under `docs/`
 
-Only `packages/*` need npm package setup.
+Only `runtime/node/*` need npm package setup.
 
 ## Package creation checklist
 
-1. Create `packages/<name>/`.
+1. Create `runtime/node/<name>/`.
 2. Add a `package.json` with:
    - `name`
    - `version`
@@ -97,7 +97,7 @@ This repo's release workflow is package-agnostic:
 - commit and push version/changelog updates
 - run `changeset publish`
 
-In practice, that means a new package does not need its own bespoke release workflow.
+In practice, that means a new Node runtime package does not need its own bespoke release workflow.
 
 ## Official references
 
