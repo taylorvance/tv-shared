@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-runtime
 
+## 0.4.0
+
+### Minor Changes
+
+- bde6dc2: Add shared project-scoped browser storage utilities with safe localStorage access, namespace inspection/reset helpers, a dev inspector UI, and namespace JSON import/export tools.
+
 ## 0.3.0
 
 ### Minor Changes
