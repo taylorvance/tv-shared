@@ -14,11 +14,14 @@ Root exports:
 - `TVPROGRAMS_HOSTNAME`
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
+- `createProjectStorage`
 
 Explicit subpaths:
 
 - `@taylorvance/tv-shared-runtime/BrandBadge`
 - `@taylorvance/tv-shared-runtime/assets`
+- `@taylorvance/tv-shared-runtime/storage`
+- `@taylorvance/tv-shared-runtime/storage-dev`
 
 ## Design goals
 
@@ -81,3 +84,49 @@ Raw asset subpaths:
 ```tsx
 import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 ```
+
+## Project storage
+
+Use `createProjectStorage` when a consumer needs browser `localStorage` keys that stay unique per project on shared origins such as localhost.
+
+```ts
+import { createProjectStorage } from '@taylorvance/tv-shared-runtime/storage';
+
+const storage = createProjectStorage('wordlink', { version: 1 });
+
+const themePreference = storage.readString('theme-preference') ?? 'system';
+
+storage.writeString('dark', 'theme-preference');
+storage.writeJson({ expanded: true }, 'panels', 'complexity');
+const entries = storage.list();
+```
+
+When `version` is provided, keys follow the pattern `<projectKey>:v<version>:<key parts...>`, for example `wordlink:v1:theme-preference`.
+
+The helper is SSR-safe and treats storage-access failures as soft failures by returning `null` or doing nothing.
+
+It also provides namespace-level maintenance helpers:
+- `list()` returns the current keys and raw string values for the active project/version namespace.
+- `clear()` removes only the current project/version namespace.
+
+## Storage dev tools
+
+For dev-only inspection, manual edits, and namespace JSON import/export, use the explicit `storage-dev` entry:
+
+```tsx
+import { ProjectStorageInspector } from '@taylorvance/tv-shared-runtime/storage-dev';
+
+export function StorageDebugPanel() {
+  return (
+    <ProjectStorageInspector
+      projectKey="mcts-web"
+      versions={[
+        { label: 'Version 1', value: 1 },
+        { label: 'Version 2', value: 2 },
+      ]}
+    />
+  );
+}
+```
+
+This inspector is meant for local tooling and debug screens, not default production UI.

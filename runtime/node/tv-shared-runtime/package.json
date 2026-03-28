@@ -23,6 +23,16 @@
       "import": "./dist/assets.js",
       "default": "./dist/assets.js"
     },
+    "./storage": {
+      "types": "./dist/storage.d.ts",
+      "import": "./dist/storage.js",
+      "default": "./dist/storage.js"
+    },
+    "./storage-dev": {
+      "types": "./dist/storage-dev.d.ts",
+      "import": "./dist/storage-dev.js",
+      "default": "./dist/storage-dev.js"
+    },
     "./tv.svg": "./assets/tv.svg",
     "./tv.png": "./assets/tv.png"
   },

@@ -85,6 +85,7 @@ This repo now contains:
 - `.github/workflows/release.yml`: a Changesets-based release workflow for the published Node runtime package.
 - `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and tooling baselines.
 - `docs/adoption-plan.md`: the current consumer alignment plan.
+- `docs/roadmap.md`: the shared follow-up roadmap for runtime, tooling, and workflow ideas.
 - `docs/package-checklist.md`: the checklist for creating and publishing future runtime packages.
 - `docs/release-strategy.md`: the release/versioning guidance for runtime packages in this repo.
 - `docs/examples/`: copyable consumer workflow wrappers.
@@ -102,10 +103,13 @@ Root exports:
 - `TVPROGRAMS_HOSTNAME`
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
+- `createProjectStorage`
 
 Explicit subpaths:
 - `@taylorvance/tv-shared-runtime/BrandBadge`
 - `@taylorvance/tv-shared-runtime/assets`
+- `@taylorvance/tv-shared-runtime/storage`
+- `@taylorvance/tv-shared-runtime/storage-dev`
 
 ### `BrandBadge`
 
@@ -178,6 +182,26 @@ export function HeaderLogo() {
 Available raw asset subpaths:
 - `@taylorvance/tv-shared-runtime/tv.svg`
 - `@taylorvance/tv-shared-runtime/tv.png`
+
+### Project storage
+
+The runtime package now also exposes a small browser-storage helper for project-scoped keys:
+
+```ts
+import { createProjectStorage } from '@taylorvance/tv-shared-runtime/storage';
+
+const storage = createProjectStorage('mcts-web', { version: 1 });
+
+const APP_STORAGE_KEY = storage.key('app');
+const getGameSessionStorageKey = (gameId: string) => storage.key('session', gameId);
+const clearSavedState = () => storage.clear();
+```
+
+Use this when a consumer needs `localStorage` on shared origins like localhost without colliding with sibling projects. With `version: 1`, keys are written as `mcts-web:v1:...`, which is equally valid in production.
+
+The storage helper also exposes `list()` and `clear()` for namespace-scoped inspection and reset flows.
+
+For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports `ProjectStorageInspector`, a small React browser for namespaced storage keys with raw editing, import/export JSON, remove, clear, refresh, and version switching support.
 
 ## Shared assets
 
