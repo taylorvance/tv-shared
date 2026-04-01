@@ -15,11 +15,15 @@ Root exports:
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
 - `createProjectStorage`
+- `useHotkeys`
+- `useKonami`
+- `KONAMI_CODE_SEQUENCE`
 
 Explicit subpaths:
 
 - `@taylorvance/tv-shared-runtime/BrandBadge`
 - `@taylorvance/tv-shared-runtime/assets`
+- `@taylorvance/tv-shared-runtime/hotkeys`
 - `@taylorvance/tv-shared-runtime/storage`
 - `@taylorvance/tv-shared-runtime/storage-dev`
 
@@ -130,3 +134,49 @@ export function StorageDebugPanel() {
 ```
 
 This inspector is meant for local tooling and debug screens, not default production UI.
+
+## Hotkeys
+
+Use `useHotkeys` for shared app shortcuts. It supports the library's normal global behavior by default, and it becomes element-scoped when you attach the returned ref to a focusable container.
+
+```tsx
+import { useHotkeys } from '@taylorvance/tv-shared-runtime';
+
+export function SessionPanel() {
+  const hotkeyRef = useHotkeys<HTMLDivElement>([
+    { keys: 'r', callback: () => resetGame() },
+    { keys: 'z', callback: () => undoMove() },
+    { keys: 'x', callback: () => redoMove() },
+  ]);
+
+  return (
+    <section ref={hotkeyRef} tabIndex={-1}>
+      ...
+    </section>
+  );
+}
+```
+
+If you do not attach the returned ref, the hotkeys are global for the current document.
+
+The hook keeps the default input-safe behavior from `react-hotkeys-hook`, so shortcuts do not fire while a user is typing into an `input`, `textarea`, or `select` unless you opt in through `enableOnFormTags`.
+
+For an easy easter-egg path, `useKonami` exposes a built-in Konami listener with the same optional scoping model:
+
+```tsx
+import { useKonami } from '@taylorvance/tv-shared-runtime';
+
+export function SessionPanel() {
+  const hotkeyRef = useKonami<HTMLDivElement>(() => {
+    setDebugMode(true);
+  });
+
+  return (
+    <section ref={hotkeyRef} tabIndex={-1}>
+      ...
+    </section>
+  );
+}
+```
+
+The shared Konami sequence is also exported as `KONAMI_CODE_SEQUENCE`.

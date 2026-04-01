@@ -104,10 +104,14 @@ Root exports:
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
 - `createProjectStorage`
+- `useHotkeys`
+- `useKonami`
+- `KONAMI_CODE_SEQUENCE`
 
 Explicit subpaths:
 - `@taylorvance/tv-shared-runtime/BrandBadge`
 - `@taylorvance/tv-shared-runtime/assets`
+- `@taylorvance/tv-shared-runtime/hotkeys`
 - `@taylorvance/tv-shared-runtime/storage`
 - `@taylorvance/tv-shared-runtime/storage-dev`
 
@@ -202,6 +206,34 @@ Use this when a consumer needs `localStorage` on shared origins like localhost w
 The storage helper also exposes `list()` and `clear()` for namespace-scoped inspection and reset flows.
 
 For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports `ProjectStorageInspector`, a small React browser for namespaced storage keys with raw editing, import/export JSON, remove, clear, refresh, and version switching support.
+
+### Hotkeys
+
+The runtime package now also exports shared React hotkey hooks:
+
+```tsx
+import { useHotkeys, useKonami } from '@taylorvance/tv-shared-runtime';
+
+export function GameSession() {
+  const hotkeyRef = useHotkeys<HTMLDivElement>([
+    { keys: 'r', callback: () => resetGame() },
+    { keys: 'z', callback: () => undoMove() },
+    { keys: 'x', callback: () => redoMove() },
+  ]);
+
+  useKonami(() => {
+    setDebugMode(true);
+  });
+
+  return (
+    <section ref={hotkeyRef} tabIndex={-1}>
+      ...
+    </section>
+  );
+}
+```
+
+If the returned ref is attached to a focusable container, the hotkeys are scoped to that region and remain active while focus stays inside descendants. If the ref is left unattached, the hotkeys remain global for the current document.
 
 ## Shared assets
 

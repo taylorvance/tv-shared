@@ -20,3 +20,10 @@ export {
   type StorageKeyPart,
   type StorageLike,
 } from './storage.js';
+export {
+  KONAMI_CODE_SEQUENCE,
+  useHotkeys,
+  useKonami,
+  type HotkeyBinding,
+  type KonamiOptions,
+} from './hotkeys.js';

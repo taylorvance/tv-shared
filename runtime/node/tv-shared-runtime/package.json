@@ -28,6 +28,11 @@
       "import": "./dist/storage.js",
       "default": "./dist/storage.js"
     },
+    "./hotkeys": {
+      "types": "./dist/hotkeys.d.ts",
+      "import": "./dist/hotkeys.js",
+      "default": "./dist/hotkeys.js"
+    },
     "./storage-dev": {
       "types": "./dist/storage-dev.d.ts",
       "import": "./dist/storage-dev.js",
@@ -53,6 +58,9 @@
     "type": "git",
     "url": "https://github.com/taylorvance/tv-shared",
     "directory": "runtime/node/tv-shared-runtime"
+  },
+  "dependencies": {
+    "react-hotkeys-hook": "^5.1.0"
   },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0"
