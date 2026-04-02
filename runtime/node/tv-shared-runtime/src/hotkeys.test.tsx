@@ -1,6 +1,23 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { useHotkeys, useKonami } from './hotkeys.js';
+import { useHotkeys, useKonami, useKeySequence } from './hotkeys.js';
+
+const fireKonamiKeys = () => {
+  for (const [key, code] of [
+    ['ArrowUp', 'ArrowUp'],
+    ['ArrowUp', 'ArrowUp'],
+    ['ArrowDown', 'ArrowDown'],
+    ['ArrowDown', 'ArrowDown'],
+    ['ArrowLeft', 'ArrowLeft'],
+    ['ArrowRight', 'ArrowRight'],
+    ['ArrowLeft', 'ArrowLeft'],
+    ['ArrowRight', 'ArrowRight'],
+    ['b', 'KeyB'],
+    ['a', 'KeyA'],
+  ] as const) {
+    fireEvent.keyDown(document, { code, key });
+  }
+};
 
 describe('useHotkeys', () => {
   it('registers a global hotkey with the single-binding signature', () => {
@@ -85,21 +102,7 @@ describe('useKonami', () => {
     };
 
     render(<Example />);
-
-    for (const [key, code] of [
-      ['ArrowUp', 'ArrowUp'],
-      ['ArrowUp', 'ArrowUp'],
-      ['ArrowDown', 'ArrowDown'],
-      ['ArrowDown', 'ArrowDown'],
-      ['ArrowLeft', 'ArrowLeft'],
-      ['ArrowRight', 'ArrowRight'],
-      ['ArrowLeft', 'ArrowLeft'],
-      ['ArrowRight', 'ArrowRight'],
-      ['b', 'KeyB'],
-      ['a', 'KeyA'],
-    ] as const) {
-      fireEvent.keyDown(document, { code, key });
-    }
+    fireKonamiKeys();
 
     expect(onTrigger).toHaveBeenCalledTimes(1);
   });
@@ -128,22 +131,115 @@ describe('useKonami', () => {
 
     const inside = screen.getByRole('button', { name: 'Inside' });
     inside.focus();
+    fireKonamiKeys();
+
+    expect(onTrigger).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('useKeySequence', () => {
+  it('fires after a custom key sequence', () => {
+    const onTrigger = vi.fn();
+
+    const Example = () => {
+      useKeySequence(['g', 'g'], onTrigger);
+
+      return <div>Sequence</div>;
+    };
+
+    render(<Example />);
+    fireEvent.keyDown(document, { code: 'KeyG', key: 'g' });
+    fireEvent.keyDown(document, { code: 'KeyG', key: 'g' });
+
+    expect(onTrigger).toHaveBeenCalledTimes(1);
+  });
+
+  it('supports multiple sequence bindings in one listener', () => {
+    const onDebug = vi.fn();
+    const onRainbow = vi.fn();
+
+    const Example = () => {
+      useKeySequence([
+        { sequence: ['d', 'e', 'b', 'u', 'g'], callback: onDebug },
+        { sequence: ['r', 'g', 'b'], callback: onRainbow },
+      ]);
+
+      return <div>Sequences</div>;
+    };
+
+    render(<Example />);
 
     for (const [key, code] of [
-      ['ArrowUp', 'ArrowUp'],
-      ['ArrowUp', 'ArrowUp'],
-      ['ArrowDown', 'ArrowDown'],
-      ['ArrowDown', 'ArrowDown'],
-      ['ArrowLeft', 'ArrowLeft'],
-      ['ArrowRight', 'ArrowRight'],
-      ['ArrowLeft', 'ArrowLeft'],
-      ['ArrowRight', 'ArrowRight'],
+      ['d', 'KeyD'],
+      ['e', 'KeyE'],
       ['b', 'KeyB'],
-      ['a', 'KeyA'],
+      ['u', 'KeyU'],
+      ['g', 'KeyG'],
+      ['r', 'KeyR'],
+      ['g', 'KeyG'],
+      ['b', 'KeyB'],
     ] as const) {
       fireEvent.keyDown(document, { code, key });
     }
 
-    expect(onTrigger).toHaveBeenCalledTimes(1);
+    expect(onDebug).toHaveBeenCalledTimes(1);
+    expect(onRainbow).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses a between-key timeout with a 1000ms default', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+
+    try {
+      const onTrigger = vi.fn();
+
+      const Example = () => {
+        useKeySequence(['a', 'b'], onTrigger);
+
+        return <div>Sequence</div>;
+      };
+
+      render(<Example />);
+      fireEvent.keyDown(document, { code: 'KeyA', key: 'a' });
+      vi.advanceTimersByTime(1_001);
+      vi.setSystemTime(1_001);
+      fireEvent.keyDown(document, { code: 'KeyB', key: 'b' });
+
+      expect(onTrigger).not.toHaveBeenCalled();
+
+      fireEvent.keyDown(document, { code: 'KeyA', key: 'a' });
+      vi.advanceTimersByTime(1_000);
+      vi.setSystemTime(2_001);
+      fireEvent.keyDown(document, { code: 'KeyB', key: 'b' });
+
+      expect(onTrigger).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('allows overriding the between-key timeout', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+
+    try {
+      const onTrigger = vi.fn();
+
+      const Example = () => {
+        useKeySequence(['a', 'b'], onTrigger, { timeoutMs: 1_500 });
+
+        return <div>Sequence</div>;
+      };
+
+      render(<Example />);
+      fireEvent.keyDown(document, { code: 'KeyA', key: 'a' });
+      vi.advanceTimersByTime(1_200);
+      vi.setSystemTime(1_200);
+      fireEvent.keyDown(document, { code: 'KeyB', key: 'b' });
+
+      expect(onTrigger).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

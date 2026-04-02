@@ -16,6 +16,7 @@ Root exports:
 - `brandBadgeClassNames`
 - `createProjectStorage`
 - `useHotkeys`
+- `useKeySequence`
 - `useKonami`
 - `KONAMI_CODE_SEQUENCE`
 
@@ -160,6 +161,23 @@ export function SessionPanel() {
 If you do not attach the returned ref, the hotkeys are global for the current document.
 
 The hook keeps the default input-safe behavior from `react-hotkeys-hook`, so shortcuts do not fire while a user is typing into an `input`, `textarea`, or `select` unless you opt in through `enableOnFormTags`.
+
+For hidden multi-key sequences, `useKeySequence` supports either one sequence or multiple bindings with shared timeout and scope rules:
+
+```tsx
+import { useKeySequence } from '@taylorvance/tv-shared-runtime';
+
+export function DebugPanel() {
+  useKeySequence([
+    { sequence: ['d', 'e', 'b', 'u', 'g'], callback: () => setDebugMode(true) },
+    { sequence: ['r', 'g', 'b'], callback: () => setRainbowMode(true) },
+  ], { timeoutMs: 1_500 });
+
+  return null;
+}
+```
+
+`timeoutMs` defaults to `1000` and applies between each correct key press, not across the whole sequence.
 
 For an easy easter-egg path, `useKonami` exposes a built-in Konami listener with the same optional scoping model:
 

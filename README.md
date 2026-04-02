@@ -105,6 +105,7 @@ Root exports:
 - `brandBadgeClassNames`
 - `createProjectStorage`
 - `useHotkeys`
+- `useKeySequence`
 - `useKonami`
 - `KONAMI_CODE_SEQUENCE`
 
@@ -212,7 +213,7 @@ For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports
 The runtime package now also exports shared React hotkey hooks:
 
 ```tsx
-import { useHotkeys, useKonami } from '@taylorvance/tv-shared-runtime';
+import { useHotkeys, useKonami, useKeySequence } from '@taylorvance/tv-shared-runtime';
 
 export function GameSession() {
   const hotkeyRef = useHotkeys<HTMLDivElement>([
@@ -225,6 +226,11 @@ export function GameSession() {
     setDebugMode(true);
   });
 
+  useKeySequence([
+    { sequence: ['d', 'e', 'b', 'u', 'g'], callback: () => setDebugMode(true) },
+    { sequence: ['r', 'g', 'b'], callback: () => setRainbowMode(true) },
+  ], { timeoutMs: 1_500 });
+
   return (
     <section ref={hotkeyRef} tabIndex={-1}>
       ...
@@ -234,6 +240,10 @@ export function GameSession() {
 ```
 
 If the returned ref is attached to a focusable container, the hotkeys are scoped to that region and remain active while focus stays inside descendants. If the ref is left unattached, the hotkeys remain global for the current document.
+
+`useKeySequence` shares the same scope and input-safety behavior as `useKonami`. Its `timeoutMs` default is `1000`, and that timeout applies between each correct key press rather than to the whole sequence.
+
+`useKonami` uses the standard shared sequence exported as `KONAMI_CODE_SEQUENCE`.
 
 ## Shared assets
 

@@ -26,4 +26,7 @@ export {
   useKonami,
   type HotkeyBinding,
   type KonamiOptions,
+  type KeySequenceBinding,
+  type KeySequenceOptions,
+  useKeySequence,
 } from './hotkeys.js';

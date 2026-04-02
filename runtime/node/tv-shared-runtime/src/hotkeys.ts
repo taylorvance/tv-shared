@@ -5,7 +5,7 @@ import {
   type Keys,
   type Options,
 } from 'react-hotkeys-hook';
-import type { DependencyList, MutableRefObject } from 'react';
+import type { DependencyList, RefObject } from 'react';
 
 export type FormTags = 'input' | 'textarea' | 'select' | 'INPUT' | 'TEXTAREA' | 'SELECT';
 
@@ -14,7 +14,7 @@ export interface HotkeyBinding {
   keys: Keys;
 }
 
-export interface KonamiOptions {
+export interface KeySequenceOptions {
   document?: Document;
   enableOnContentEditable?: boolean;
   enableOnFormTags?: readonly FormTags[] | boolean;
@@ -23,9 +23,16 @@ export interface KonamiOptions {
   timeoutMs?: number;
 }
 
+export interface KeySequenceBinding {
+  callback: (event: KeyboardEvent) => void;
+  sequence: readonly string[];
+}
+
+export type KonamiOptions = KeySequenceOptions;
+
 const DEFAULT_COMBINATION_KEY = '+';
 const DEFAULT_SPLIT_KEY = ',';
-const KONAMI_TIMEOUT_MS = 1_000;
+const KEY_SEQUENCE_TIMEOUT_MS = 1_000;
 const hotkeyKeyAliases: Record<string, string> = {
   ' ': 'space',
   ',': 'comma',
@@ -87,6 +94,13 @@ type SharedHotkeysEvent = {
 const isBindingArray = (value: Keys | readonly HotkeyBinding[]): value is readonly HotkeyBinding[] => (
   Array.isArray(value)
   && value.every((item) => typeof item === 'object' && item !== null && 'callback' in item && 'keys' in item)
+);
+
+const isKeySequenceBindingArray = (
+  value: readonly string[] | readonly KeySequenceBinding[],
+): value is readonly KeySequenceBinding[] => (
+  Array.isArray(value)
+  && value.every((item) => typeof item === 'object' && item !== null && 'callback' in item && 'sequence' in item)
 );
 
 const isDependencyList = (value: DependencyList | Options | undefined): value is DependencyList => (
@@ -159,7 +173,7 @@ const isKeyboardEventTriggeredByInput = (event: KeyboardEvent): boolean => {
   return target.isContentEditable || ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName);
 };
 
-const isScopeActive = (scopeRef: MutableRefObject<HTMLElement | null>): boolean => {
+const isScopeActive = (scopeRef: RefObject<HTMLElement | null>): boolean => {
   const scopeElement = scopeRef.current;
 
   if (!scopeElement) {
@@ -185,25 +199,27 @@ const getBindingKeys = (
   ));
 };
 
-export { KONAMI_CODE_SEQUENCE };
+export {
+  KONAMI_CODE_SEQUENCE,
+};
 
 export function useHotkeys<T extends HTMLElement>(
   keys: Keys,
   callback: HotkeyCallback,
   options?: Options,
   deps?: DependencyList,
-): MutableRefObject<T | null>;
+): RefObject<T | null>;
 export function useHotkeys<T extends HTMLElement>(
   bindings: readonly HotkeyBinding[],
   options?: Options,
   deps?: DependencyList,
-): MutableRefObject<T | null>;
+): RefObject<T | null>;
 export function useHotkeys<T extends HTMLElement>(
   keysOrBindings: Keys | readonly HotkeyBinding[],
   callbackOrOptions?: HotkeyCallback | Options,
   maybeOptions?: Options | DependencyList,
   maybeDeps?: DependencyList,
-): MutableRefObject<T | null> {
+): RefObject<T | null> {
   if (!isBindingArray(keysOrBindings)) {
     const options = (
       typeof callbackOrOptions === 'function'
@@ -258,15 +274,68 @@ export function useKonami<T extends HTMLElement>(
   callback: (event: KeyboardEvent) => void,
   options?: KonamiOptions,
   deps?: DependencyList,
-): MutableRefObject<T | null> {
-  const scopeRef = useRef<T | null>(null);
-  const callbackRef = useRef(callback);
-  const progressRef = useRef(0);
-  const lastKeyTimestampRef = useRef(0);
-  const memoizedCallback = useCallback(callback, deps ?? []);
-  const timeoutMs = options?.timeoutMs ?? KONAMI_TIMEOUT_MS;
+): RefObject<T | null> {
+  return useKeySequence<T>(KONAMI_CODE_SEQUENCE, callback, options, deps);
+}
 
-  callbackRef.current = deps ? memoizedCallback : callback;
+export function useKeySequence<T extends HTMLElement>(
+  sequence: readonly string[],
+  callback: (event: KeyboardEvent) => void,
+  options?: KeySequenceOptions,
+  deps?: DependencyList,
+): RefObject<T | null>;
+export function useKeySequence<T extends HTMLElement>(
+  bindings: readonly KeySequenceBinding[],
+  options?: KeySequenceOptions,
+  deps?: DependencyList,
+): RefObject<T | null>;
+export function useKeySequence<T extends HTMLElement>(
+  sequenceOrBindings: readonly string[] | readonly KeySequenceBinding[],
+  callbackOrOptions?: ((event: KeyboardEvent) => void) | KeySequenceOptions,
+  maybeOptions?: KeySequenceOptions | DependencyList,
+  maybeDeps?: DependencyList,
+): RefObject<T | null> {
+  const scopeRef = useRef<T | null>(null);
+  const bindingsRef = useRef<readonly KeySequenceBinding[]>([]);
+  const stateRef = useRef<Array<{
+    lastKeyTimestamp: number | null;
+    progress: number;
+  }>>([]);
+  const deps = (
+    typeof callbackOrOptions === 'function'
+      ? maybeDeps
+      : isDependencyList(maybeOptions)
+        ? maybeOptions
+        : maybeDeps
+  );
+  const options = (
+    typeof callbackOrOptions === 'function'
+      ? isDependencyList(maybeOptions)
+        ? undefined
+        : maybeOptions
+      : isDependencyList(callbackOrOptions)
+        ? undefined
+        : callbackOrOptions
+  );
+  const timeoutMs = options?.timeoutMs ?? KEY_SEQUENCE_TIMEOUT_MS;
+  const memoizedCallback = useCallback(
+    typeof callbackOrOptions === 'function' ? callbackOrOptions : () => {},
+    deps ?? [],
+  );
+
+  bindingsRef.current = isKeySequenceBindingArray(sequenceOrBindings)
+    ? sequenceOrBindings.map((binding) => ({
+        callback: binding.callback,
+        sequence: binding.sequence.map((key) => normalizeKey(key)),
+      }))
+    : [{
+        callback: deps ? memoizedCallback : (callbackOrOptions as (event: KeyboardEvent) => void),
+        sequence: sequenceOrBindings.map((key) => normalizeKey(key)),
+      }];
+  stateRef.current = bindingsRef.current.map((_, index) => ({
+    lastKeyTimestamp: stateRef.current[index]?.lastKeyTimestamp ?? null,
+    progress: stateRef.current[index]?.progress ?? 0,
+  }));
 
   useEffect(() => {
     if (options?.enabled === false) {
@@ -290,45 +359,62 @@ export function useKonami<T extends HTMLElement>(
         return;
       }
 
-      if (!isScopeActive(scopeRef as MutableRefObject<HTMLElement | null>)) {
+      if (!isScopeActive(scopeRef)) {
         return;
       }
 
       const normalizedKey = normalizeKey(event.key);
-      const expectedKey = KONAMI_CODE_SEQUENCE[progressRef.current];
+      const now = Date.now();
+      const matchedBindings = bindingsRef.current.filter((binding, index) => {
+        const bindingState = stateRef.current[index] ?? {
+          lastKeyTimestamp: null,
+          progress: 0,
+        };
+        stateRef.current[index] = bindingState;
+        const expectedKey = binding.sequence[bindingState.progress];
 
-      if (!expectedKey) {
-        progressRef.current = 0;
-        lastKeyTimestampRef.current = 0;
-        return;
-      }
-
-      if (
-        lastKeyTimestampRef.current > 0
-        && Date.now() - lastKeyTimestampRef.current > timeoutMs
-      ) {
-        progressRef.current = 0;
-      }
-
-      if (normalizedKey === expectedKey) {
-        progressRef.current += 1;
-        lastKeyTimestampRef.current = Date.now();
-
-        if (progressRef.current === KONAMI_CODE_SEQUENCE.length) {
-          if (options?.preventDefault) {
-            event.preventDefault();
-          }
-
-          callbackRef.current(event);
-          progressRef.current = 0;
-          lastKeyTimestampRef.current = 0;
+        if (!expectedKey) {
+          bindingState.progress = 0;
+          bindingState.lastKeyTimestamp = null;
+          return false;
         }
 
+        if (
+          bindingState.lastKeyTimestamp !== null
+          && now - bindingState.lastKeyTimestamp > timeoutMs
+        ) {
+          bindingState.progress = 0;
+        }
+
+        if (normalizedKey === binding.sequence[bindingState.progress]) {
+          bindingState.progress += 1;
+          bindingState.lastKeyTimestamp = now;
+
+          if (bindingState.progress === binding.sequence.length) {
+            bindingState.progress = 0;
+            bindingState.lastKeyTimestamp = null;
+            return true;
+          }
+
+          return false;
+        }
+
+        bindingState.progress = normalizedKey === binding.sequence[0] ? 1 : 0;
+        bindingState.lastKeyTimestamp = bindingState.progress > 0 ? now : null;
+        return false;
+      });
+
+      if (matchedBindings.length === 0) {
         return;
       }
 
-      progressRef.current = normalizedKey === KONAMI_CODE_SEQUENCE[0] ? 1 : 0;
-      lastKeyTimestampRef.current = progressRef.current > 0 ? Date.now() : 0;
+      if (options?.preventDefault) {
+        event.preventDefault();
+      }
+
+      for (const binding of matchedBindings) {
+        binding.callback(event);
+      }
     };
 
     hotkeyDocument.addEventListener('keydown', handleKeyDown);
