@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-runtime
 
+## 0.5.0
+
+### Minor Changes
+
+- 95ba031: Add shared hotkey hooks with optional element scoping and a built-in Konami listener.
+
 ## 0.4.0
 
 ### Minor Changes
