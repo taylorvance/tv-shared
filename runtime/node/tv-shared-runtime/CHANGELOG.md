@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-runtime
 
+## 0.6.0
+
+### Minor Changes
+
+- e79599e: Add a generic `useKeySequence` hook for hidden multi-key sequences.
+
 ## 0.5.0
 
 ### Minor Changes
