@@ -55,6 +55,36 @@ describe('ProjectStorageInspector', () => {
     expect(targetStorage.getItem('mcts-web:v1:session:Onitama')).toBe('{"history":["__INITIAL_STATE__"]}');
   });
 
+  it('round-trips literal separators through keyParts in namespace JSON', () => {
+    const sourceStorage = createMemoryStorage({
+      'wordlink:v1:a%3Ab': 'literal-colon',
+      'wordlink:v1:a:b': 'nested',
+    });
+    const sourceNamespace = createProjectStorage('wordlink', { storage: sourceStorage, version: 1 });
+    const serialized = stringifyProjectStorageNamespace(sourceNamespace);
+    const parsed = parseProjectStorageNamespace(serialized);
+    const targetStorage = createMemoryStorage();
+    const targetNamespace = createProjectStorage('wordlink', { storage: targetStorage, version: 1 });
+
+    expect(parsed.entries).toEqual([
+      {
+        keyParts: ['a', 'b'],
+        rawValue: 'nested',
+        relativeKey: 'a:b',
+      },
+      {
+        keyParts: ['a:b'],
+        rawValue: 'literal-colon',
+        relativeKey: 'a:b',
+      },
+    ]);
+
+    importProjectStorageNamespace(targetNamespace, parsed, { mode: 'replace' });
+
+    expect(targetStorage.getItem('wordlink:v1:a%3Ab')).toBe('literal-colon');
+    expect(targetStorage.getItem('wordlink:v1:a:b')).toBe('nested');
+  });
+
   it('rejects namespace imports that target a different project/version', () => {
     const snapshot = parseProjectStorageNamespace(JSON.stringify({
       entries: [{ relativeKey: 'app', rawValue: '{"selectedGame":"Onitama"}' }],
@@ -146,6 +176,49 @@ describe('ProjectStorageInspector', () => {
     });
   });
 
+  it('accepts numeric import versions after switching versions in the inspector', async () => {
+    const storage = createMemoryStorage({
+      'mcts-web:v1:app': '{"selectedGame":"Onitama"}',
+      'mcts-web:v2:app': '{"selectedGame":"Tak"}',
+    });
+
+    render(
+      <ProjectStorageInspector
+        projectKey="mcts-web"
+        storage={storage}
+        versions={[
+          { label: 'Version 1', value: 1 },
+          { label: 'Version 2', value: 2 },
+        ]}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Storage version'), { target: { value: '2' } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Namespace:/)).toHaveTextContent('mcts-web:v2');
+    });
+
+    fireEvent.change(screen.getByLabelText('Namespace JSON'), {
+      target: {
+        value: JSON.stringify({
+          entries: [{
+            keyParts: ['app'],
+            relativeKey: 'app',
+            rawValue: '{"selectedGame":"Hex"}',
+          }],
+          projectKey: 'mcts-web',
+          version: 2,
+        }, null, 2),
+      },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Import Merge' }));
+
+    await waitFor(() => {
+      expect(storage.getItem('mcts-web:v2:app')).toBe('{"selectedGame":"Hex"}');
+    });
+  });
+
   it('imports namespace JSON through the inspector', async () => {
     const storage = createMemoryStorage({
       'wordlink:v1:theme-preference': 'dark',
@@ -180,5 +253,33 @@ describe('ProjectStorageInspector', () => {
     });
 
     expect(storage.getItem('wordlink:v1:legacy')).toBeNull();
+  });
+
+  it('refreshes namespace JSON after saving a raw value', async () => {
+    const storage = createMemoryStorage();
+
+    render(
+      <ProjectStorageInspector
+        defaultRelativeKey="theme-preference"
+        projectKey="wordlink"
+        storage={storage}
+        version={1}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Raw value'), { target: { value: 'dark' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save Raw Value' }));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Namespace JSON')).toHaveValue(JSON.stringify({
+        entries: [{
+          keyParts: ['theme-preference'],
+          relativeKey: 'theme-preference',
+          rawValue: 'dark',
+        }],
+        projectKey: 'wordlink',
+        version: 1,
+      }, null, 2));
+    });
   });
 });

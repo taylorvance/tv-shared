@@ -33,6 +33,13 @@ describe('createProjectStorage', () => {
     expect(wordlinkStorage.key('theme-preference')).toBe('wordlink:v1:theme-preference');
   });
 
+  it('encodes literal separator characters inside key parts', () => {
+    const projectStorage = createProjectStorage('wordlink', { version: 1 });
+
+    expect(projectStorage.key('a:b')).toBe('wordlink:v1:a%3Ab');
+    expect(projectStorage.key('a', 'b')).toBe('wordlink:v1:a:b');
+  });
+
   it('round-trips string and JSON values through the configured storage', () => {
     const backingStorage = createMemoryStorage();
     const projectStorage = createProjectStorage('wordlink', {
@@ -80,11 +87,13 @@ describe('createProjectStorage', () => {
     expect(projectStorage.list()).toEqual([
       {
         fullKey: 'mcts-web:v1:app',
+        keyParts: ['app'],
         rawValue: '{"selectedGame":"Onitama"}',
         relativeKey: 'app',
       },
       {
         fullKey: 'mcts-web:v1:session:Onitama',
+        keyParts: ['session', 'Onitama'],
         rawValue: '{"history":["__INITIAL_STATE__"]}',
         relativeKey: 'session:Onitama',
       },
@@ -153,5 +162,22 @@ describe('createProjectStorage', () => {
     const projectStorage = createProjectStorage('mcts-web', { version: 1 });
 
     expect(() => projectStorage.key('')).toThrow('key part 1 must not be empty.');
+  });
+
+  it('preserves key parts in listed entries for encoded suffixes', () => {
+    const backingStorage = createMemoryStorage();
+    const projectStorage = createProjectStorage('wordlink', {
+      storage: backingStorage,
+      version: 1,
+    });
+
+    projectStorage.writeString('x', 'a:b');
+
+    expect(projectStorage.list()).toEqual([{
+      fullKey: 'wordlink:v1:a%3Ab',
+      keyParts: ['a:b'],
+      rawValue: 'x',
+      relativeKey: 'a:b',
+    }]);
   });
 });

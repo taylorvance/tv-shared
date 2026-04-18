@@ -35,11 +35,6 @@ const DEFAULT_SPLIT_KEY = ',';
 const KEY_SEQUENCE_TIMEOUT_MS = 1_000;
 const hotkeyKeyAliases: Record<string, string> = {
   ' ': 'space',
-  ',': 'comma',
-  '-': 'slash',
-  '.': 'period',
-  '#': 'backslash',
-  '+': 'bracketright',
   altleft: 'alt',
   altright: 'alt',
   cmd: 'meta',

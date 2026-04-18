@@ -38,6 +38,7 @@ Export shape:
   "version": 1,
   "entries": [
     {
+      "keyParts": ["app"],
       "relativeKey": "app",
       "rawValue": "{\"selectedGame\":\"Onitama\"}"
     }

@@ -204,9 +204,11 @@ const clearSavedState = () => storage.clear();
 
 Use this when a consumer needs `localStorage` on shared origins like localhost without colliding with sibling projects. With `version: 1`, keys are written as `mcts-web:v1:...`, which is equally valid in production.
 
-The storage helper also exposes `list()` and `clear()` for namespace-scoped inspection and reset flows.
+Each key part is percent-encoded before it is joined into the storage key, so `storage.key('a:b')` and `storage.key('a', 'b')` remain distinct.
 
-For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports `ProjectStorageInspector`, a small React browser for namespaced storage keys with raw editing, import/export JSON, remove, clear, refresh, and version switching support.
+The storage helper also exposes `list()` and `clear()` for namespace-scoped inspection and reset flows. `list()` now includes both a human-readable `relativeKey` and an exact `keyParts` array for lossless tooling.
+
+For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports `ProjectStorageInspector`, a small React browser for namespaced storage keys with raw editing, import/export JSON, remove, clear, refresh, and version switching support. Namespace JSON exports include `keyParts` so literal separator characters round-trip exactly.
 
 ### Hotkeys
 

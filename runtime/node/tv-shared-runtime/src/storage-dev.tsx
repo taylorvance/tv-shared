@@ -13,6 +13,7 @@ export interface ProjectStorageInspectorVersionOption {
 }
 
 export interface ProjectStorageNamespaceEntry {
+  keyParts: string[];
   relativeKey: string;
   rawValue: string;
 }
@@ -182,17 +183,19 @@ const getVersionOptions = (
   }];
 };
 
-const buildFullKey = (projectStoragePrefix: string, relativeKey: string) => (
-  relativeKey.length === 0 ? projectStoragePrefix : `${projectStoragePrefix}:${relativeKey}`
-);
+const buildRelativeKey = (keyParts: readonly string[]) => keyParts.join(':');
 
 const formatEntryLabel = (entry: ProjectStorageEntry) => (
-  entry.relativeKey.length === 0 ? '(root key)' : entry.relativeKey
+  entry.keyParts.length === 0
+    ? '(root key)'
+    : entry.keyParts.some((part) => part.includes(':') || part.length === 0)
+      ? JSON.stringify(entry.keyParts)
+      : entry.relativeKey
 );
 
 const relativeKeyToParts = (relativeKey: string) => {
   if(relativeKey.length === 0) {
-    return [] as StorageKeyPart[];
+    return [] as string[];
   }
 
   const parts = relativeKey.split(':');
@@ -207,7 +210,11 @@ const isStorageKeyPart = (value: unknown): value is StorageKeyPart => (
   typeof value === 'string' || typeof value === 'number'
 );
 
-const isNamespaceEntry = (value: unknown): value is ProjectStorageNamespaceEntry => {
+const isNamespaceEntry = (value: unknown): value is {
+  keyParts?: unknown;
+  relativeKey: string;
+  rawValue: string;
+} => {
   if(!value || typeof value !== 'object') {
     return false;
   }
@@ -217,28 +224,58 @@ const isNamespaceEntry = (value: unknown): value is ProjectStorageNamespaceEntry
   return (
     typeof entry.relativeKey === 'string'
     && typeof entry.rawValue === 'string'
+    && (
+      entry.keyParts === undefined
+      || (
+        Array.isArray(entry.keyParts)
+        && entry.keyParts.every((part) => typeof part === 'string' && part.length > 0)
+      )
+    )
   );
+};
+
+const normalizeNamespaceEntry = (
+  value: unknown,
+): ProjectStorageNamespaceEntry => {
+  if(!isNamespaceEntry(value)) {
+    throw new Error('Namespace JSON entries must be an array of { relativeKey, rawValue }.');
+  }
+
+  const entry = value as {
+    keyParts?: string[];
+    relativeKey: string;
+    rawValue: string;
+  };
+  const keyParts = entry.keyParts ?? relativeKeyToParts(entry.relativeKey);
+  const relativeKey = buildRelativeKey(keyParts);
+
+  if(entry.keyParts && entry.relativeKey !== relativeKey) {
+    throw new Error('Namespace JSON relativeKey must match keyParts when keyParts is provided.');
+  }
+
+  return {
+    keyParts,
+    relativeKey,
+    rawValue: entry.rawValue,
+  };
 };
 
 const matchesNamespace = (
   projectStorage: ProjectStorage,
   snapshot: ProjectStorageNamespaceSnapshot,
 ) => {
-  if(snapshot.projectKey !== projectStorage.projectKey) {
-    return false;
-  }
+  const snapshotProjectStorage = createProjectStorage(snapshot.projectKey, {
+    ...(snapshot.version === undefined ? {} : { version: snapshot.version }),
+  });
 
-  if(projectStorage.version === undefined) {
-    return snapshot.version === undefined;
-  }
-
-  return snapshot.version === projectStorage.version;
+  return snapshotProjectStorage.key() === projectStorage.key();
 };
 
 export const exportProjectStorageNamespace = (
   projectStorage: ProjectStorage,
 ): ProjectStorageNamespaceSnapshot => ({
-  entries: projectStorage.list().map(({ relativeKey, rawValue }) => ({
+  entries: projectStorage.list().map(({ keyParts, relativeKey, rawValue }) => ({
+    keyParts,
     relativeKey,
     rawValue,
   })),
@@ -278,16 +315,12 @@ export const parseProjectStorageNamespace = (
     throw new Error('Namespace JSON version must be a string or number when present.');
   }
 
-  if(!Array.isArray(entries) || !entries.every(isNamespaceEntry)) {
+  if(!Array.isArray(entries)) {
     throw new Error('Namespace JSON entries must be an array of { relativeKey, rawValue }.');
   }
 
-  entries.forEach((entry) => {
-    relativeKeyToParts(entry.relativeKey);
-  });
-
   return {
-    entries,
+    entries: entries.map((entry) => normalizeNamespaceEntry(entry)),
     projectKey,
     ...(version === undefined ? {} : { version }),
   };
@@ -312,11 +345,20 @@ export const importProjectStorageNamespace = (
   }
 
   for(const entry of snapshot.entries) {
-    projectStorage.writeString(entry.rawValue, ...relativeKeyToParts(entry.relativeKey));
+    projectStorage.writeString(entry.rawValue, ...entry.keyParts);
   }
 
   return snapshot.entries.length;
 };
+
+const resolveSelectedVersionOption = (
+  value: string,
+  versionOptions: readonly ProjectStorageInspectorVersionOption[],
+) => (
+  versionOptions.find((option) => (
+    (option.value === null ? '__none__' : `${option.value}`) === value
+  ))?.value ?? (value === '__none__' ? null : value)
+);
 
 export function ProjectStorageInspector({
   className,
@@ -336,8 +378,9 @@ export function ProjectStorageInspector({
     versionOptions[0]?.value ?? version ?? null,
   );
   const [entries, setEntries] = useState<ProjectStorageEntry[]>([]);
-  const [selectedRelativeKey, setSelectedRelativeKey] = useState(defaultRelativeKey);
+  const [selectedFullKey, setSelectedFullKey] = useState<string | null>(null);
   const [draftRelativeKey, setDraftRelativeKey] = useState(defaultRelativeKey);
+  const [draftKeyParts, setDraftKeyParts] = useState<string[] | null>(null);
   const [editorValue, setEditorValue] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [transferValue, setTransferValue] = useState('');
@@ -348,58 +391,67 @@ export function ProjectStorageInspector({
   });
 
   const syncTransferValue = () => {
-    setTransferValue(stringifyProjectStorageNamespace(projectStorage));
+    const nextTransferValue = stringifyProjectStorageNamespace(projectStorage);
+    setTransferValue(nextTransferValue);
+
+    return nextTransferValue;
   };
 
-  const refreshEntries = (nextSelectedKey = selectedRelativeKey) => {
+  const refreshEntries = ({
+    nextDraftRelativeKey = draftRelativeKey,
+    selectedEntryFullKey = selectedFullKey,
+  }: {
+    nextDraftRelativeKey?: string;
+    selectedEntryFullKey?: string | null;
+  } = {}) => {
     const nextEntries = projectStorage.list();
     setEntries(nextEntries);
 
-    const matchingEntry = nextEntries.find((entry) => entry.relativeKey === nextSelectedKey);
+    const matchingEntry = selectedEntryFullKey
+      ? nextEntries.find((entry) => entry.fullKey === selectedEntryFullKey)
+      : nextEntries.find((entry) => entry.relativeKey === nextDraftRelativeKey);
     if(matchingEntry) {
-      setSelectedRelativeKey(matchingEntry.relativeKey);
+      setSelectedFullKey(matchingEntry.fullKey);
       setDraftRelativeKey(matchingEntry.relativeKey);
+      setDraftKeyParts([...matchingEntry.keyParts]);
       setEditorValue(matchingEntry.rawValue);
       return;
     }
 
-    if((nextSelectedKey === null || nextSelectedKey.length === 0) && nextEntries[0]) {
-      setSelectedRelativeKey(nextEntries[0].relativeKey);
+    if((selectedEntryFullKey === null || selectedEntryFullKey === undefined) && nextEntries[0]) {
+      setSelectedFullKey(nextEntries[0].fullKey);
       setDraftRelativeKey(nextEntries[0].relativeKey);
+      setDraftKeyParts([...nextEntries[0].keyParts]);
       setEditorValue(nextEntries[0].rawValue);
       return;
     }
 
-    setSelectedRelativeKey(nextSelectedKey);
-    setDraftRelativeKey(nextSelectedKey);
+    setSelectedFullKey(null);
+    setDraftRelativeKey(nextDraftRelativeKey);
+    setDraftKeyParts(null);
 
-    if(nextSelectedKey.length === 0) {
-      setEditorValue('');
-      return;
-    }
-
-    const activeStorage = resolveInspectorStorage(storage);
-    if(!activeStorage) {
+    if(nextDraftRelativeKey.length === 0) {
       setEditorValue('');
       return;
     }
 
     try {
-      setEditorValue(activeStorage.getItem(buildFullKey(projectStorage.key(), nextSelectedKey)) ?? '');
+      setEditorValue(projectStorage.readString(...relativeKeyToParts(nextDraftRelativeKey)) ?? '');
     } catch {
       setEditorValue('');
     }
   };
 
   useEffect(() => {
-    refreshEntries(defaultRelativeKey);
+    refreshEntries({ nextDraftRelativeKey: defaultRelativeKey, selectedEntryFullKey: null });
     syncTransferValue();
     setStatus(null);
   }, [defaultRelativeKey, projectKey, selectedVersion, storage]);
 
   const handleSelectEntry = (entry: ProjectStorageEntry) => {
-    setSelectedRelativeKey(entry.relativeKey);
+    setSelectedFullKey(entry.fullKey);
     setDraftRelativeKey(entry.relativeKey);
+    setDraftKeyParts([...entry.keyParts]);
     setEditorValue(entry.rawValue);
     setStatus(null);
   };
@@ -414,11 +466,16 @@ export function ProjectStorageInspector({
     }
 
     try {
-      activeStorage.setItem(buildFullKey(projectStorage.key(), nextRelativeKey), editorValue);
+      const nextFullKey = selectedFullKey && draftKeyParts
+        ? selectedFullKey
+        : projectStorage.key(...(draftKeyParts ?? relativeKeyToParts(nextRelativeKey)));
+
+      activeStorage.setItem(nextFullKey, editorValue);
       setStatus('Saved.');
-      refreshEntries(nextRelativeKey);
-    } catch {
-      setStatus('Save failed.');
+      refreshEntries({ selectedEntryFullKey: nextFullKey });
+      syncTransferValue();
+    } catch(error) {
+      setStatus(error instanceof Error ? error.message : 'Save failed.');
     }
   };
 
@@ -432,29 +489,38 @@ export function ProjectStorageInspector({
     }
 
     try {
-      activeStorage.removeItem(buildFullKey(projectStorage.key(), nextRelativeKey));
+      const nextFullKey = selectedFullKey && draftKeyParts
+        ? selectedFullKey
+        : projectStorage.key(...(draftKeyParts ?? relativeKeyToParts(nextRelativeKey)));
+
+      activeStorage.removeItem(nextFullKey);
       setStatus('Removed.');
-      refreshEntries('');
-    } catch {
-      setStatus('Remove failed.');
+      refreshEntries({ nextDraftRelativeKey: '', selectedEntryFullKey: null });
+      syncTransferValue();
+    } catch(error) {
+      setStatus(error instanceof Error ? error.message : 'Remove failed.');
     }
   };
 
   const handleClear = () => {
     projectStorage.clear();
     setStatus('Namespace cleared.');
-    refreshEntries('');
+    refreshEntries({ nextDraftRelativeKey: '', selectedEntryFullKey: null });
     syncTransferValue();
   };
 
   const handleCopyNamespaceJson = async () => {
     try {
+      const exportValue = stringifyProjectStorageNamespace(projectStorage);
+
       if(typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+        setTransferValue(exportValue);
         setStatus('Clipboard copy is unavailable. Copy from the textarea instead.');
         return;
       }
 
-      await navigator.clipboard.writeText(transferValue);
+      await navigator.clipboard.writeText(exportValue);
+      setTransferValue(exportValue);
       setStatus('Namespace JSON copied.');
     } catch {
       setStatus('Clipboard copy failed. Copy from the textarea instead.');
@@ -466,7 +532,7 @@ export function ProjectStorageInspector({
       const snapshot = parseProjectStorageNamespace(transferValue);
       const importedEntryCount = importProjectStorageNamespace(projectStorage, snapshot, { mode });
 
-      refreshEntries('');
+      refreshEntries({ nextDraftRelativeKey: '', selectedEntryFullKey: null });
       syncTransferValue();
       setStatus(`${mode === 'replace' ? 'Replaced' : 'Merged'} ${importedEntryCount} entries.`);
     } catch(error) {
@@ -494,7 +560,7 @@ export function ProjectStorageInspector({
                 aria-label="Storage version"
                 onChange={(event) => {
                   const nextValue = event.target.value;
-                  setSelectedVersion(nextValue === '__none__' ? null : nextValue);
+                  setSelectedVersion(resolveSelectedVersionOption(nextValue, versionOptions));
                 }}
                 style={unstyled ? undefined : DEFAULT_INPUT_STYLE}
                 value={selectedVersion === null ? '__none__' : `${selectedVersion}`}
@@ -525,7 +591,7 @@ export function ProjectStorageInspector({
           {entries.length === 0 ? <div>{emptyMessage}</div> : null}
 
           {entries.map((entry) => {
-            const isSelected = entry.relativeKey === selectedRelativeKey;
+            const isSelected = entry.fullKey === selectedFullKey;
 
             return (
               <button
@@ -551,7 +617,11 @@ export function ProjectStorageInspector({
             <div style={unstyled ? undefined : DEFAULT_META_STYLE}>Key suffix</div>
             <input
               aria-label="Key suffix"
-              onChange={(event) => setDraftRelativeKey(event.target.value)}
+              onChange={(event) => {
+                setDraftRelativeKey(event.target.value);
+                setDraftKeyParts(null);
+                setSelectedFullKey(null);
+              }}
               style={unstyled ? undefined : DEFAULT_INPUT_STYLE}
               type="text"
               value={draftRelativeKey}
@@ -579,7 +649,7 @@ export function ProjectStorageInspector({
           </div>
 
           <div style={unstyled ? undefined : DEFAULT_META_STYLE}>
-            {status ?? 'Edits write raw strings directly to storage.'}
+            {status ?? 'Edits write raw strings directly to storage. Key suffix uses ":" between key parts; use Namespace JSON keyParts for exact literal ":" segments.'}
           </div>
         </div>
       </div>
@@ -612,7 +682,7 @@ export function ProjectStorageInspector({
         </div>
 
         <div style={unstyled ? undefined : DEFAULT_META_STYLE}>
-          Import validates the selected project key and version before writing raw string values.
+          Import validates the selected project key and version before writing raw string values, and keyParts keep literal ":" segments lossless.
         </div>
       </div>
     </section>

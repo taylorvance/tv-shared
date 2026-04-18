@@ -108,10 +108,12 @@ const entries = storage.list();
 
 When `version` is provided, keys follow the pattern `<projectKey>:v<version>:<key parts...>`, for example `wordlink:v1:theme-preference`.
 
+Each key part is percent-encoded before it is joined into the stored key. That keeps literal separators reversible, so `storage.key('a:b')` and `storage.key('a', 'b')` do not collide.
+
 The helper is SSR-safe and treats storage-access failures as soft failures by returning `null` or doing nothing.
 
 It also provides namespace-level maintenance helpers:
-- `list()` returns the current keys and raw string values for the active project/version namespace.
+- `list()` returns the current keys and raw string values for the active project/version namespace, including both a display-oriented `relativeKey` and exact `keyParts`.
 - `clear()` removes only the current project/version namespace.
 
 ## Storage dev tools
@@ -135,6 +137,8 @@ export function StorageDebugPanel() {
 ```
 
 This inspector is meant for local tooling and debug screens, not default production UI.
+
+Namespace JSON exports include `keyParts` so keys that contain literal separator characters can round-trip exactly.
 
 ## Hotkeys
 

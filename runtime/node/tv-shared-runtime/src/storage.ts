@@ -28,6 +28,7 @@ export interface ProjectStorage {
 
 export interface ProjectStorageEntry {
   fullKey: string;
+  keyParts: string[];
   relativeKey: string;
   rawValue: string;
 }
@@ -42,6 +43,35 @@ const normalizeStorageKeyPart = (part: StorageKeyPart, label: string) => {
   }
 
   return value;
+};
+
+const encodeStorageKeyPart = (part: StorageKeyPart, label: string) => (
+  encodeURIComponent(normalizeStorageKeyPart(part, label))
+);
+
+const decodeStorageKeyPart = (part: string) => {
+  try {
+    return decodeURIComponent(part);
+  } catch {
+    return part;
+  }
+};
+
+const buildRelativeKey = (parts: readonly string[]) => parts.join(STORAGE_KEY_SEPARATOR);
+
+const parseStoredKeyParts = (
+  fullKey: string,
+  prefix: string,
+  nestedPrefix: string,
+) => {
+  if(fullKey === prefix) {
+    return [] as string[];
+  }
+
+  return fullKey
+    .slice(nestedPrefix.length)
+    .split(STORAGE_KEY_SEPARATOR)
+    .map((part) => decodeStorageKeyPart(part));
 };
 
 const resolveStorage = (storage: StorageLike | null | undefined): StorageLike | null => {
@@ -73,13 +103,13 @@ const buildProjectStoragePrefix = (
   projectKey: string,
   version: StorageKeyPart | undefined,
 ) => {
-  const normalizedProjectKey = normalizeStorageKeyPart(projectKey, 'projectKey');
+  const normalizedProjectKey = encodeStorageKeyPart(projectKey, 'projectKey');
 
   if(version === undefined) {
     return normalizedProjectKey;
   }
 
-  return `${normalizedProjectKey}${STORAGE_KEY_SEPARATOR}v${normalizeStorageKeyPart(version, 'version')}`;
+  return `${normalizedProjectKey}${STORAGE_KEY_SEPARATOR}v${encodeStorageKeyPart(version, 'version')}`;
 };
 
 export const createProjectStorage = (
@@ -95,7 +125,7 @@ export const createProjectStorage = (
     }
 
     const suffix = parts
-      .map((part, index) => normalizeStorageKeyPart(part, `key part ${index + 1}`))
+      .map((part, index) => encodeStorageKeyPart(part, `key part ${index + 1}`))
       .join(STORAGE_KEY_SEPARATOR);
 
     return `${prefix}${STORAGE_KEY_SEPARATOR}${suffix}`;
@@ -121,9 +151,12 @@ export const createProjectStorage = (
           continue;
         }
 
+        const keyParts = parseStoredKeyParts(fullKey, prefix, nestedPrefix);
+
         entries.push({
           fullKey,
-          relativeKey: fullKey === prefix ? '' : fullKey.slice(nestedPrefix.length),
+          keyParts,
+          relativeKey: buildRelativeKey(keyParts),
           rawValue,
         });
       }

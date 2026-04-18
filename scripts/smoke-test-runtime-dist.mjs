@@ -76,6 +76,7 @@ assert.equal(memoryStorage.get('mcts-web:v1:app'), '{"selectedGame":"Onitama"}')
 assert.deepEqual(storage.readJson('app'), { selectedGame: 'Onitama' });
 assert.deepEqual(storage.list(), [{
   fullKey: 'mcts-web:v1:app',
+  keyParts: ['app'],
   rawValue: '{"selectedGame":"Onitama"}',
   relativeKey: 'app',
 }]);
