@@ -2,6 +2,10 @@
 
 Shared runtime code, tooling, and GitHub workflow infrastructure for Taylor Vance portfolio projects.
 
+> Personal infrastructure repo for Taylor Vance projects.
+>
+> This is not a general-purpose public framework. It exists to support my own apps, workflows, and experiments. APIs may change quickly, semver is best-effort, and I reserve the right to make breaking changes whenever that is the least annoying option for me.
+
 This repo is intended to be the source of truth for code reused across:
 - `tvprograms`
 - `mcts-web`
