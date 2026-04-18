@@ -18,20 +18,70 @@
       "import": "./dist/BrandBadge.js",
       "default": "./dist/BrandBadge.js"
     },
+    "./TvProgramsWordmark": {
+      "types": "./dist/TvProgramsWordmark.d.ts",
+      "import": "./dist/TvProgramsWordmark.js",
+      "default": "./dist/TvProgramsWordmark.js"
+    },
     "./assets": {
       "types": "./dist/assets.d.ts",
       "import": "./dist/assets.js",
       "default": "./dist/assets.js"
+    },
+    "./codecs": {
+      "types": "./dist/codecs.d.ts",
+      "import": "./dist/codecs.js",
+      "default": "./dist/codecs.js"
     },
     "./storage": {
       "types": "./dist/storage.d.ts",
       "import": "./dist/storage.js",
       "default": "./dist/storage.js"
     },
+    "./persistent-state": {
+      "types": "./dist/persistent-state.d.ts",
+      "import": "./dist/persistent-state.js",
+      "default": "./dist/persistent-state.js"
+    },
+    "./url-state": {
+      "types": "./dist/url-state.d.ts",
+      "import": "./dist/url-state.js",
+      "default": "./dist/url-state.js"
+    },
+    "./debug-flags": {
+      "types": "./dist/debug-flags.d.ts",
+      "import": "./dist/debug-flags.js",
+      "default": "./dist/debug-flags.js"
+    },
+    "./shortcuts": {
+      "types": "./dist/shortcuts.d.ts",
+      "import": "./dist/shortcuts.js",
+      "default": "./dist/shortcuts.js"
+    },
     "./hotkeys": {
       "types": "./dist/hotkeys.d.ts",
       "import": "./dist/hotkeys.js",
       "default": "./dist/hotkeys.js"
+    },
+    "./share": {
+      "types": "./dist/share.d.ts",
+      "import": "./dist/share.js",
+      "default": "./dist/share.js"
+    },
+    "./snapshots": {
+      "types": "./dist/snapshots.d.ts",
+      "import": "./dist/snapshots.js",
+      "default": "./dist/snapshots.js"
+    },
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.js",
+      "default": "./dist/theme.js"
+    },
+    "./a11y": {
+      "types": "./dist/a11y.d.ts",
+      "import": "./dist/a11y.js",
+      "default": "./dist/a11y.js"
     },
     "./storage-dev": {
       "types": "./dist/storage-dev.d.ts",

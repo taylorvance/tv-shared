@@ -6,6 +6,22 @@ This note tracks follow-up ideas that are worth keeping in-repo even when they a
 
 Add new sections here as shared runtime, tooling, workflow, or consumer-alignment ideas accumulate.
 
+## Runtime utility layer
+
+Implemented now:
+- `usePersistentState()` on top of `createProjectStorage()`
+- `useUrlState()` for query-param and hash-param state
+- `useDebugFlag()` for storage-backed flags with optional URL overrides
+- `useShortcutRegistry()` plus `ShortcutPanel` for visible shortcut help while still allowing hidden bindings
+- snapshot, clipboard/share, theme, and lightweight accessibility helpers
+- `TvProgramsWordmark` as the next brand primitive after `BrandBadge` and `TvProgramsMark`
+
+Still intentionally deferred:
+- implicit storage migrations
+- app-shell layout components
+- broad UI-kit expansion
+- higher-level state abstractions that only one consumer uses
+
 ## Storage
 
 ### Current scope
@@ -84,3 +100,13 @@ Keep the shared storage layer split in two:
 - dev tooling: inspection, editing, copy/paste, and experiments
 
 That split keeps consumer production bundles small and avoids pretending that app-specific persistence models are shared when they are not.
+
+## Consumer adoption tooling
+
+Implemented now:
+- temporary adoption checklist in `docs/tmp-consumer-adoption-todo.md`
+- `npm run doctor:consumers` for a read-only sibling-repo audit
+
+Potential follow-up:
+- include nested source-file scanning in the doctor if imports spread beyond top-level entry files
+- add package-manager/workspace awareness before claiming broader workflow adoption support

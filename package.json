@@ -15,6 +15,7 @@
     "clean:root": "rm -rf node_modules coverage .turbo .vite .eslintcache *.tsbuildinfo",
     "clean:workspaces": "npm run clean --workspaces --if-present",
     "dev": "concurrently -k -n runtime,host -c auto \"npm run dev --workspace @taylorvance/tv-shared-runtime\" \"npm run dev --workspace @tv-shared/playground -- --host\"",
+    "doctor:consumers": "node scripts/doctor-consumers.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview:host": "npm run preview --workspace @tv-shared/playground -- --host",

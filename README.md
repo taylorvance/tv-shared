@@ -99,20 +99,53 @@ This repo now contains:
 Root exports:
 - `BrandBadge`
 - `TvProgramsMark`
+- `TvProgramsWordmark`
 - `TVPROGRAMS_URL`
 - `TVPROGRAMS_HOSTNAME`
 - `TVPROGRAMS_DEFAULT_LABEL`
 - `brandBadgeClassNames`
+- `tvProgramsWordmarkClassNames`
 - `createProjectStorage`
+- `usePersistentState`
+- `useUrlState`
+- `useDebugFlag`
 - `useHotkeys`
 - `useKeySequence`
 - `useKonami`
+- `useShortcutRegistry`
+- `ShortcutPanel`
+- `createStringCodec`
+- `createJsonCodec`
+- `createNumberCodec`
+- `createBooleanCodec`
+- `createStringUnionCodec`
+- `writeClipboardText`
+- `shareContent`
+- `serializeSnapshot`
+- `parseSnapshot`
+- `copySnapshotToClipboard`
+- `useThemePreference`
+- `useSystemTheme`
+- `resolveThemePreference`
+- `usePrefersReducedMotion`
+- `LiveAnnouncer`
+- `useLiveAnnouncer`
 - `KONAMI_CODE_SEQUENCE`
 
 Explicit subpaths:
 - `@taylorvance/tv-shared-runtime/BrandBadge`
+- `@taylorvance/tv-shared-runtime/TvProgramsWordmark`
 - `@taylorvance/tv-shared-runtime/assets`
+- `@taylorvance/tv-shared-runtime/codecs`
+- `@taylorvance/tv-shared-runtime/persistent-state`
+- `@taylorvance/tv-shared-runtime/url-state`
+- `@taylorvance/tv-shared-runtime/debug-flags`
+- `@taylorvance/tv-shared-runtime/shortcuts`
 - `@taylorvance/tv-shared-runtime/hotkeys`
+- `@taylorvance/tv-shared-runtime/share`
+- `@taylorvance/tv-shared-runtime/snapshots`
+- `@taylorvance/tv-shared-runtime/theme`
+- `@taylorvance/tv-shared-runtime/a11y`
 - `@taylorvance/tv-shared-runtime/storage`
 - `@taylorvance/tv-shared-runtime/storage-dev`
 
@@ -246,6 +279,27 @@ If the returned ref is attached to a focusable container, the hotkeys are scoped
 `useKeySequence` shares the same scope and input-safety behavior as `useKonami`. Its `timeoutMs` default is `1000`, and that timeout applies between each correct key press rather than to the whole sequence.
 
 `useKonami` uses the standard shared sequence exported as `KONAMI_CODE_SEQUENCE`.
+
+### Shared state helpers
+
+The runtime package now also exposes a higher-level utility layer around those storage and hotkey primitives:
+- `usePersistentState()` for storage-backed React state with same-tab and cross-tab sync
+- `useUrlState()` for query-param or hash-param state
+- `useDebugFlag()` for storage-backed flags with optional URL overrides and hotkey toggles
+- `useShortcutRegistry()` plus `ShortcutPanel` for visible shortcut help without exposing hidden sequences
+
+These are still intentionally small. They help consumers stop rewriting the same persistence and shortcut plumbing without moving app-specific state models into `tv-shared`.
+
+### Snapshots, share, theme, and accessibility
+
+The runtime package now also includes:
+- codec helpers for storage and URL serialization
+- snapshot helpers for deterministic export/import flows
+- clipboard and Web Share helpers with fallback behavior
+- `useThemePreference()` and `useSystemTheme()` for persisted theme state
+- `usePrefersReducedMotion()` and `LiveAnnouncer` for lightweight accessibility plumbing
+
+The local playground now exercises these helpers together as a real consumer harness rather than only checking the badge and logo exports.
 
 ## Shared assets
 

@@ -2,30 +2,40 @@
 
 Shared React runtime primitives for Taylor Vance portfolio projects.
 
-The canonical TV Programs logo files live in the repo-level `assets/` directory and are copied into this package during build so the package can continue to expose raw asset subpaths.
+The package stays intentionally small. It is meant to hold stable cross-app building blocks, not app shells or business logic.
+
+The canonical TV Programs logo files live in the repo-level `assets/` directory and are copied into this package during build so npm consumers can keep using raw asset subpaths.
 
 ## Public API
 
 Root exports:
 
-- `BrandBadge`
-- `TvProgramsMark`
-- `TVPROGRAMS_URL`
-- `TVPROGRAMS_HOSTNAME`
-- `TVPROGRAMS_DEFAULT_LABEL`
-- `brandBadgeClassNames`
-- `createProjectStorage`
-- `useHotkeys`
-- `useKeySequence`
-- `useKonami`
-- `KONAMI_CODE_SEQUENCE`
+- brand primitives: `BrandBadge`, `TvProgramsMark`, `TvProgramsWordmark`
+- shared branding constants: `TVPROGRAMS_URL`, `TVPROGRAMS_HOSTNAME`, `TVPROGRAMS_DEFAULT_LABEL`
+- styling hooks: `brandBadgeClassNames`, `tvProgramsWordmarkClassNames`
+- storage: `createProjectStorage`, `usePersistentState`
+- URL and debug helpers: `useUrlState`, `useDebugFlag`
+- hotkeys and shortcut helpers: `useHotkeys`, `useKeySequence`, `useKonami`, `useShortcutRegistry`, `ShortcutPanel`, `formatShortcutGesture`
+- codecs: `createStringCodec`, `createJsonCodec`, `createNumberCodec`, `createBooleanCodec`, `createStringUnionCodec`
+- share and snapshot helpers: `writeClipboardText`, `shareContent`, `formatShareContent`, `createSnapshotEnvelope`, `serializeSnapshot`, `parseSnapshot`, `copySnapshotToClipboard`
+- theme and accessibility helpers: `useThemePreference`, `useSystemTheme`, `resolveThemePreference`, `usePrefersReducedMotion`, `LiveAnnouncer`, `useLiveAnnouncer`
 
 Explicit subpaths:
 
 - `@taylorvance/tv-shared-runtime/BrandBadge`
+- `@taylorvance/tv-shared-runtime/TvProgramsWordmark`
 - `@taylorvance/tv-shared-runtime/assets`
-- `@taylorvance/tv-shared-runtime/hotkeys`
+- `@taylorvance/tv-shared-runtime/codecs`
 - `@taylorvance/tv-shared-runtime/storage`
+- `@taylorvance/tv-shared-runtime/persistent-state`
+- `@taylorvance/tv-shared-runtime/url-state`
+- `@taylorvance/tv-shared-runtime/debug-flags`
+- `@taylorvance/tv-shared-runtime/shortcuts`
+- `@taylorvance/tv-shared-runtime/hotkeys`
+- `@taylorvance/tv-shared-runtime/share`
+- `@taylorvance/tv-shared-runtime/snapshots`
+- `@taylorvance/tv-shared-runtime/theme`
+- `@taylorvance/tv-shared-runtime/a11y`
 - `@taylorvance/tv-shared-runtime/storage-dev`
 
 ## Design goals
@@ -33,11 +43,12 @@ Explicit subpaths:
 - Keep primitives small and stable.
 - Stay CSS-agnostic by default.
 - Work in utility-class and plain-CSS apps.
-- Prefer composition and slot hooks over opinionated app styling.
+- Prefer composable hooks and helpers over broad abstractions.
+- Let consumer apps keep ownership of layout and domain logic.
 
-## `BrandBadge`
+## Brand primitives
 
-Quick default usage:
+Default badge:
 
 ```tsx
 import { BrandBadge } from '@taylorvance/tv-shared-runtime';
@@ -47,74 +58,206 @@ export function Footer() {
 }
 ```
 
-Explicit component-only entry:
+Wordmark:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime/BrandBadge';
+import { TvProgramsWordmark } from '@taylorvance/tv-shared-runtime';
+
+export function Header() {
+  return <TvProgramsWordmark />;
+}
 ```
 
 Consumer-owned styling:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime';
+import { TvProgramsWordmark } from '@taylorvance/tv-shared-runtime';
 
-export function Footer() {
+export function Header() {
   return (
-    <BrandBadge
-      className="brand-badge"
-      iconClassName="brand-badge-icon"
-      labelClassName="brand-badge-label"
+    <TvProgramsWordmark
+      className="brand-wordmark"
+      labelClassName="brand-wordmark-label"
+      markClassName="brand-wordmark-mark"
       unstyled
     />
   );
 }
 ```
 
-## Logo assets
-
-React component:
-
-```tsx
-import { TvProgramsMark } from '@taylorvance/tv-shared-runtime';
-```
-
-URL exports:
-
-```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-runtime/assets';
-```
-
-Raw asset subpaths:
+Raw asset subpaths remain available:
 
 ```tsx
 import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 ```
 
-## Project storage
+## Storage and state
 
-Use `createProjectStorage` when a consumer needs browser `localStorage` keys that stay unique per project on shared origins such as localhost.
+Use `createProjectStorage()` for namespaced `localStorage` keys on shared origins such as localhost:
 
 ```ts
 import { createProjectStorage } from '@taylorvance/tv-shared-runtime/storage';
 
 const storage = createProjectStorage('wordlink', { version: 1 });
-
-const themePreference = storage.readString('theme-preference') ?? 'system';
-
-storage.writeString('dark', 'theme-preference');
-storage.writeJson({ expanded: true }, 'panels', 'complexity');
-const entries = storage.list();
 ```
 
-When `version` is provided, keys follow the pattern `<projectKey>:v<version>:<key parts...>`, for example `wordlink:v1:theme-preference`.
+Each key part is percent-encoded before it is joined into the stored key, so `storage.key('a:b')` and `storage.key('a', 'b')` do not collide.
 
-Each key part is percent-encoded before it is joined into the stored key. That keeps literal separators reversible, so `storage.key('a:b')` and `storage.key('a', 'b')` do not collide.
+For React state backed by that namespace:
 
-The helper is SSR-safe and treats storage-access failures as soft failures by returning `null` or doing nothing.
+```tsx
+import {
+  createStringCodec,
+  usePersistentState,
+} from '@taylorvance/tv-shared-runtime';
 
-It also provides namespace-level maintenance helpers:
-- `list()` returns the current keys and raw string values for the active project/version namespace, including both a display-oriented `relativeKey` and exact `keyParts`.
-- `clear()` removes only the current project/version namespace.
+const storage = createProjectStorage('wordlink', { version: 1 });
+
+export function NotesPanel() {
+  const [notes, setNotes, controls] = usePersistentState(storage, ['demo', 'notes'], {
+    codec: createStringCodec(),
+    defaultValue: '',
+  });
+
+  return (
+    <>
+      <textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
+      <button onClick={controls.clear}>Reset</button>
+    </>
+  );
+}
+```
+
+For shareable URL state:
+
+```tsx
+import { createStringCodec, useUrlState } from '@taylorvance/tv-shared-runtime';
+
+export function InspectorTabs() {
+  const [tab, setTab] = useUrlState('tab', {
+    codec: createStringCodec(),
+    defaultValue: 'overview',
+  });
+
+  return <button onClick={() => setTab('history')}>{tab}</button>;
+}
+```
+
+`useUrlState()` supports both query params and hash-param mode.
+
+## Debug flags and shortcuts
+
+Use `useDebugFlag()` when a flag should be storage-backed, optionally overridable by a URL param, and optionally toggleable by a hotkey:
+
+```tsx
+import { useDebugFlag } from '@taylorvance/tv-shared-runtime';
+
+export function SessionDebug({ storage }: { storage: ProjectStorage }) {
+  const debugGrid = useDebugFlag<HTMLDivElement>('grid', {
+    hotkeys: 'g',
+    label: 'Toggle grid overlay',
+    storage,
+    urlParam: 'grid',
+  });
+
+  return (
+    <section ref={debugGrid.ref} tabIndex={-1}>
+      <button onClick={debugGrid.toggle}>
+        {debugGrid.value ? 'Disable grid' : 'Enable grid'}
+      </button>
+    </section>
+  );
+}
+```
+
+For a reusable visible-shortcuts list, keep one shortcut definition source of truth and pass the visible subset into `ShortcutPanel`:
+
+```tsx
+import { ShortcutPanel, useShortcutRegistry } from '@taylorvance/tv-shared-runtime';
+
+export function ShortcutHelp() {
+  const shortcuts = useShortcutRegistry([
+    { id: 'copy', keys: 'c', label: 'Copy snapshot', onTrigger: () => {} },
+    { id: 'secret', hidden: true, sequence: ['d', 'e', 'm', 'o'], label: 'Secret', onTrigger: () => {} },
+  ]);
+
+  return <ShortcutPanel shortcuts={shortcuts.visibleShortcuts} />;
+}
+```
+
+Hidden shortcuts stay active but are not shown by `ShortcutPanel`.
+
+`useHotkeys()`, `useKeySequence()`, and `useKonami()` are still available directly for lower-level control.
+
+## Snapshots and share helpers
+
+For deterministic app state, use the shared snapshot envelope instead of inventing a new JSON blob per app:
+
+```tsx
+import {
+  copySnapshotToClipboard,
+  parseSnapshot,
+  serializeSnapshot,
+} from '@taylorvance/tv-shared-runtime';
+
+const snapshot = serializeSnapshot({ seed: '123', moves: ['A1-B2'] }, {
+  kind: 'session',
+  version: 1,
+});
+const parsed = parseSnapshot(snapshot, { kind: 'session', version: 1 });
+
+await copySnapshotToClipboard(parsed.value, { kind: 'session', version: 1 });
+```
+
+For generic clipboard/share flows:
+
+```tsx
+import { shareContent } from '@taylorvance/tv-shared-runtime';
+
+await shareContent({
+  title: 'wordlink',
+  text: 'seed=123',
+});
+```
+
+The helper uses the Web Share API when available and falls back to the clipboard by default.
+
+## Theme and accessibility helpers
+
+Theme preference helper:
+
+```tsx
+import {
+  createProjectStorage,
+  useThemePreference,
+} from '@taylorvance/tv-shared-runtime';
+
+const storage = createProjectStorage('wordlink', { version: 1 });
+
+export function ThemeToggle() {
+  const theme = useThemePreference(storage, { applyToDocument: true });
+
+  return (
+    <button onClick={() => theme.setThemePreference('dark')}>
+      {theme.themePreference} -> {theme.resolvedTheme}
+    </button>
+  );
+}
+```
+
+Reduced motion:
+
+```tsx
+import { usePrefersReducedMotion } from '@taylorvance/tv-shared-runtime';
+```
+
+Live announcements:
+
+```tsx
+import { LiveAnnouncer, useLiveAnnouncer } from '@taylorvance/tv-shared-runtime';
+```
+
+These helpers are intentionally light. They handle system-preference and announcement plumbing, while the consumer app still decides what to animate, theme, or announce.
 
 ## Storage dev tools
 
@@ -122,83 +265,8 @@ For dev-only inspection, manual edits, and namespace JSON import/export, use the
 
 ```tsx
 import { ProjectStorageInspector } from '@taylorvance/tv-shared-runtime/storage-dev';
-
-export function StorageDebugPanel() {
-  return (
-    <ProjectStorageInspector
-      projectKey="mcts-web"
-      versions={[
-        { label: 'Version 1', value: 1 },
-        { label: 'Version 2', value: 2 },
-      ]}
-    />
-  );
-}
 ```
 
 This inspector is meant for local tooling and debug screens, not default production UI.
 
-Namespace JSON exports include `keyParts` so keys that contain literal separator characters can round-trip exactly.
-
-## Hotkeys
-
-Use `useHotkeys` for shared app shortcuts. It supports the library's normal global behavior by default, and it becomes element-scoped when you attach the returned ref to a focusable container.
-
-```tsx
-import { useHotkeys } from '@taylorvance/tv-shared-runtime';
-
-export function SessionPanel() {
-  const hotkeyRef = useHotkeys<HTMLDivElement>([
-    { keys: 'r', callback: () => resetGame() },
-    { keys: 'z', callback: () => undoMove() },
-    { keys: 'x', callback: () => redoMove() },
-  ]);
-
-  return (
-    <section ref={hotkeyRef} tabIndex={-1}>
-      ...
-    </section>
-  );
-}
-```
-
-If you do not attach the returned ref, the hotkeys are global for the current document.
-
-The hook keeps the default input-safe behavior from `react-hotkeys-hook`, so shortcuts do not fire while a user is typing into an `input`, `textarea`, or `select` unless you opt in through `enableOnFormTags`.
-
-For hidden multi-key sequences, `useKeySequence` supports either one sequence or multiple bindings with shared timeout and scope rules:
-
-```tsx
-import { useKeySequence } from '@taylorvance/tv-shared-runtime';
-
-export function DebugPanel() {
-  useKeySequence([
-    { sequence: ['d', 'e', 'b', 'u', 'g'], callback: () => setDebugMode(true) },
-    { sequence: ['r', 'g', 'b'], callback: () => setRainbowMode(true) },
-  ], { timeoutMs: 1_500 });
-
-  return null;
-}
-```
-
-`timeoutMs` defaults to `1000` and applies between each correct key press, not across the whole sequence.
-
-For an easy easter-egg path, `useKonami` exposes a built-in Konami listener with the same optional scoping model:
-
-```tsx
-import { useKonami } from '@taylorvance/tv-shared-runtime';
-
-export function SessionPanel() {
-  const hotkeyRef = useKonami<HTMLDivElement>(() => {
-    setDebugMode(true);
-  });
-
-  return (
-    <section ref={hotkeyRef} tabIndex={-1}>
-      ...
-    </section>
-  );
-}
-```
-
-The shared Konami sequence is also exported as `KONAMI_CODE_SEQUENCE`.
+Namespace JSON exports include `keyParts` so keys containing literal separator characters round-trip exactly.

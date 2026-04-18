@@ -257,3 +257,13 @@ Suggested package.json additions:
 This keeps hook ownership local while still converging on one quality gate across projects.
 
 `tv-shared` itself now uses this exact pattern.
+
+## Repo-level audit helper
+
+From this repo, run `npm run doctor:consumers` to get a read-only adoption snapshot of sibling consumer repos:
+- runtime package usage
+- moved-from `tv-shared-ui` usage and frozen `tv-shared-config` usage
+- `verify` script presence
+- shared workflow wrapper usage
+
+It is a maintenance aid for this repo only. It does not modify sibling repos.

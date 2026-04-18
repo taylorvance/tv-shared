@@ -20,14 +20,14 @@ This is a temporary checklist for aligning actual consumer repos with the curren
 - Update `@taylorvance/tv-shared-runtime` from `^0.5.0` after the next release.
 - Replace `src/utils/persistence.ts` with `createProjectStorage()` so app state and session keys share the same namespacing contract as other consumers.
 - Decide whether the repo should keep the standalone `deploy` / `predeploy` scripts now that GitHub Pages deploys through the shared workflow.
-- Decide whether this repo should migrate off `@taylorvance/tv-shared-config` in favor of copied tooling baselines, or whether that config package is still officially supported.
+- Migrate off `@taylorvance/tv-shared-config` when you want the repo on the current `tooling/node` copy-and-adapt model.
 
 ### `wordlink`
 
 - Remove `@taylorvance/tv-shared-ui` and switch `BrandBadge` imports to `@taylorvance/tv-shared-runtime`.
 - Add `@taylorvance/tv-shared-runtime` as a direct dependency instead of relying on the older UI package.
 - Consider moving `src/lib/theme.ts` to `createProjectStorage()` for theme preference namespacing if shared-origin collisions matter locally.
-- Decide whether this repo should migrate off `@taylorvance/tv-shared-config` in favor of copied tooling baselines, or whether that config package is still officially supported.
+- Migrate off `@taylorvance/tv-shared-config` when you want the repo on the current `tooling/node` copy-and-adapt model.
 
 ## Real Additional Consumers
 
@@ -36,14 +36,14 @@ This is a temporary checklist for aligning actual consumer repos with the curren
 - Remove `@taylorvance/tv-shared-ui` and switch `BrandBadge` imports to `@taylorvance/tv-shared-runtime`.
 - Update `@taylorvance/tv-shared-runtime` from `^0.4.0` after the next release.
 - Keep using shared Pages and CI workflows; those are already aligned.
-- Decide whether this repo should migrate off `@taylorvance/tv-shared-config` in favor of copied tooling baselines.
+- Migrate off `@taylorvance/tv-shared-config` when you want the repo on the current `tooling/node` copy-and-adapt model.
 
 ### `traingame`
 
 - Remove `@taylorvance/tv-shared-ui` and switch `BrandBadge` imports to `@taylorvance/tv-shared-runtime`.
 - Update `@taylorvance/tv-shared-runtime` from `^0.4.0` after the next release.
 - Keep using shared Pages and CI workflows; those are already aligned.
-- Decide whether this repo should migrate off `@taylorvance/tv-shared-config` in favor of copied tooling baselines.
+- Migrate off `@taylorvance/tv-shared-config` when you want the repo on the current `tooling/node` copy-and-adapt model.
 
 ### `dice`
 
@@ -66,8 +66,8 @@ This is a temporary checklist for aligning actual consumer repos with the curren
 
 ## Shared Repo Follow-Ups
 
-- Decide the fate of `@taylorvance/tv-shared-ui`. Right now it is still the path of least resistance for `BrandBadge` in four active repos, which undercuts the runtime package as the source of truth.
-- Decide the fate of `@taylorvance/tv-shared-config`. The docs say “copy tooling baselines,” but several active repos still depend on the published config package.
+- Treat `@taylorvance/tv-shared-ui` as the moved-from runtime path and keep migrating `BrandBadge` consumers to `@taylorvance/tv-shared-runtime`.
+- Treat `@taylorvance/tv-shared-config` as frozen for now. Prefer `tooling/<stack>/` copy-and-adapt baselines for new repos, but keep the door open to revisiting a shared config package later.
 - Expand the permanent adoption plan docs to include `bog`, `traingame`, and `dice`, since they are already real consumers.
 - Consider whether the shared workflow layer should grow beyond npm so repos like `yajilin` are either clearly in scope or clearly out of scope.
 
