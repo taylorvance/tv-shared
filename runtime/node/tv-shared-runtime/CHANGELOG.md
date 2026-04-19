@@ -1,5 +1,15 @@
 # @taylorvance/tv-shared-runtime
 
+## 0.7.0
+
+### Minor Changes
+
+- 68831f0: Add shared state, debug, shortcut, snapshot, share, theme, accessibility, and wordmark primitives.
+
+### Patch Changes
+
+- 0bd0d90: Fix storage key collisions for literal separator characters, preserve exact key parts in storage inspector exports, and correct array-bound hotkey punctuation matching.
+
 ## 0.6.0
 
 ### Minor Changes
