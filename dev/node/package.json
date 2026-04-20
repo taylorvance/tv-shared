@@ -1,6 +1,6 @@
 {
   "name": "@taylorvance/tv-shared-dev",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared dev-time config and tooling helpers for Taylor Vance web projects.",
   "type": "module",
   "main": "./index.js",

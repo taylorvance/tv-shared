@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-web
 
+## 0.7.1
+
+### Patch Changes
+
+- c0eea4c: Normalize package repository metadata for npm publishing.
+
 ## 0.7.0
 
 ### Minor Changes
