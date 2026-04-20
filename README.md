@@ -1,366 +1,131 @@
 # tv-shared
 
-Shared runtime code, tooling, and GitHub workflow infrastructure for Taylor Vance portfolio projects.
+Shared web runtime code, shared dev conventions, and reusable GitHub workflow logic for Taylor Vance portfolio projects.
 
 > Personal infrastructure repo for Taylor Vance projects.
 >
-> This is not a general-purpose public framework. It exists to support my own apps, workflows, and experiments. APIs may change quickly, semver is best-effort, and I reserve the right to make breaking changes whenever that is the least annoying option for me.
+> This is not a public framework. It exists to keep portfolio apps aligned without making one app own the shared code for the others.
 
-This repo is intended to be the source of truth for code reused across:
-- `tvprograms`
-- `mcts-web`
-- `wordlink`
-- future portfolio projects that link back to `https://tvprograms.tech`
+## Repo Model
 
-## Why this repo exists
+This repo is organized by delivery surface, not by app:
 
-The portfolio site should remain an app consumer, not the owner of shared code. Common pieces like the `BrandBadge` and the GitHub Pages deploy pipeline belong in a separate repo so they can be versioned and reused independently.
+- `runtime/web/`: published app-facing code
+- `dev/node/`: published dev-time config and tooling helpers
+- `.github/workflows/`: reusable GitHub Actions workflows
+- `assets/`: canonical shared static assets used by the packages
+- `apps/playground/`: local demo consumer for the shared web package
 
-The repo is organized by delivery mechanism:
+Current packages:
 
-- published runtime code under `runtime/<stack>/`
-- reusable workflows in `.github/workflows/`
-- stack-specific tooling assets under `tooling/<stack>/`
+- [`@taylorvance/tv-shared-web`](./runtime/web/README.md)
+- [`@taylorvance/tv-shared-dev`](./dev/node/README.md)
 
-## Initial scope
+Legacy package names are no longer the preferred path:
 
-### Runtime
-Keep published application code under `runtime/<stack>/`.
+- `@taylorvance/tv-shared-runtime`
+- `@taylorvance/tv-shared-ui`
+- `@taylorvance/tv-shared-config`
 
-Current runtime package:
-- `runtime/node/tv-shared-runtime`
+## `@taylorvance/tv-shared-web`
 
-Initial extraction targets:
-- `BrandBadge`
-- shared TV Programs mark / logo exports
-- shared site constants such as `https://tvprograms.tech`
+`@taylorvance/tv-shared-web` is the published app-facing package for shared browser and React primitives.
 
-Constraints:
-- Keep components CSS-agnostic by default.
-- Prefer small primitives over app-specific abstractions.
-- Support both Tailwind consumers and plain CSS consumers.
-- Do not move project-specific layout, page, or feature components here unless they have at least two real consumers.
+Current surface includes:
 
-### Tooling
-Keep reusable tooling source outside runtime packages.
+- brand primitives: `BrandBadge`, `TvProgramsMark`, `TvProgramsWordmark`
+- shared branding constants and raw asset subpaths
+- project-scoped storage and persistent state helpers
+- URL state, debug flag, shortcut, snapshot, share, theme, and accessibility helpers
 
-Current shape:
-
-```text
-runtime/
-  node/
-    tv-shared-runtime/
-tooling/
-  node/
-```
-
-### GitHub Actions
-Create reusable GitHub workflow(s) under `.github/workflows`.
-
-Initial extraction target:
-- reusable GitHub Pages build + deploy workflow using `workflow_call`
-
-Constraints:
-- Prefer reusable workflows over composite actions for full CI/CD pipelines.
-- Keep inputs simple: node version, working directory, install command, lint command, test command, build command, artifact path.
-- Use official Pages actions unless there is a clear reason not to.
-
-## Current structure
-
-```text
-runtime/
-  node/
-    tv-shared-runtime/
-tooling/
-  node/
-.github/
-  workflows/
-```
-
-## Current implementation
-
-This repo now contains:
-- `assets/`: canonical shared static assets such as the TV Programs mark.
-- `runtime/node/tv-shared-runtime`: the published Node runtime package.
-- `tooling/node/`: copyable Node and TypeScript tooling baselines.
-- `apps/playground`: a local example consumer for live UI development.
-- `.github/workflows/verify.yml`: a reusable CI verification workflow.
-- `.github/workflows/deploy-pages.yml`: a reusable GitHub Pages workflow built around `workflow_call`.
-- `.github/workflows/release.yml`: a Changesets-based release workflow for the published Node runtime package.
-- `docs/consumer-standard.md`: the shared consumer contract for scripts, workflows, and tooling baselines.
-- `docs/adoption-plan.md`: the current consumer alignment plan.
-- `docs/roadmap.md`: the shared follow-up roadmap for runtime, tooling, and workflow ideas.
-- `docs/package-checklist.md`: the checklist for creating and publishing future runtime packages.
-- `docs/release-strategy.md`: the release/versioning guidance for runtime packages in this repo.
-- `docs/examples/`: copyable consumer workflow wrappers.
-
-## Runtime package
-
-### Exports
-
-`@taylorvance/tv-shared-runtime` currently exposes:
-
-Root exports:
-- `BrandBadge`
-- `TvProgramsMark`
-- `TvProgramsWordmark`
-- `TVPROGRAMS_URL`
-- `TVPROGRAMS_HOSTNAME`
-- `TVPROGRAMS_DEFAULT_LABEL`
-- `brandBadgeClassNames`
-- `tvProgramsWordmarkClassNames`
-- `createProjectStorage`
-- `usePersistentState`
-- `useUrlState`
-- `useDebugFlag`
-- `useHotkeys`
-- `useKeySequence`
-- `useKonami`
-- `useShortcutRegistry`
-- `ShortcutPanel`
-- `createStringCodec`
-- `createJsonCodec`
-- `createNumberCodec`
-- `createBooleanCodec`
-- `createStringUnionCodec`
-- `writeClipboardText`
-- `shareContent`
-- `serializeSnapshot`
-- `parseSnapshot`
-- `copySnapshotToClipboard`
-- `useThemePreference`
-- `useSystemTheme`
-- `resolveThemePreference`
-- `usePrefersReducedMotion`
-- `LiveAnnouncer`
-- `useLiveAnnouncer`
-- `KONAMI_CODE_SEQUENCE`
-
-Explicit subpaths:
-- `@taylorvance/tv-shared-runtime/BrandBadge`
-- `@taylorvance/tv-shared-runtime/TvProgramsWordmark`
-- `@taylorvance/tv-shared-runtime/assets`
-- `@taylorvance/tv-shared-runtime/codecs`
-- `@taylorvance/tv-shared-runtime/persistent-state`
-- `@taylorvance/tv-shared-runtime/url-state`
-- `@taylorvance/tv-shared-runtime/debug-flags`
-- `@taylorvance/tv-shared-runtime/shortcuts`
-- `@taylorvance/tv-shared-runtime/hotkeys`
-- `@taylorvance/tv-shared-runtime/share`
-- `@taylorvance/tv-shared-runtime/snapshots`
-- `@taylorvance/tv-shared-runtime/theme`
-- `@taylorvance/tv-shared-runtime/a11y`
-- `@taylorvance/tv-shared-runtime/storage`
-- `@taylorvance/tv-shared-runtime/storage-dev`
-
-### `BrandBadge`
-
-The extracted badge keeps the shared behavior stable:
-- default href: `https://tvprograms.tech`
-- default label: `tvprograms.tech`
-- local inline SVG mark instead of a hotlinked remote image
-- default presentation for quick use
-- `unstyled` mode for Tailwind or app-owned CSS
-
-Example with defaults:
+Example:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime';
+import { BrandBadge, createProjectStorage, usePersistentState } from '@taylorvance/tv-shared-web';
 
-export function Footer() {
-  return <BrandBadge />;
-}
-```
+const storage = createProjectStorage('wordlink', { version: 1 });
 
-Example with app-owned styling:
-
-```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime';
-
-export function Footer() {
-  return (
-    <BrandBadge
-      className="brand-badge"
-      iconClassName="brand-badge-icon"
-      labelClassName="brand-badge-label"
-      unstyled
-    />
-  );
-}
-```
-
-The stable class hooks are also exported via `brandBadgeClassNames` for CSS consumers that want library-provided slot names.
-
-Consumers that want an explicit component-only entry can also import:
-
-```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime/BrandBadge';
-```
-
-### Raw logo assets
-
-For cases that need an image URL rather than a React component, the package now exposes the TV mark in two ways.
-
-Bundler-friendly URL constants:
-
-```tsx
-import { TVPROGRAMS_MARK_SVG_URL } from '@taylorvance/tv-shared-runtime/assets';
-
-export function HeaderLogo() {
-  return <img src={TVPROGRAMS_MARK_SVG_URL} alt="TV Programs" />;
-}
-```
-
-Raw asset subpaths:
-
-```tsx
-import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
-
-export function HeaderLogo() {
-  return <img src={tvMarkUrl} alt="TV Programs" />;
-}
-```
-
-Available raw asset subpaths:
-- `@taylorvance/tv-shared-runtime/tv.svg`
-- `@taylorvance/tv-shared-runtime/tv.png`
-
-### Project storage
-
-The runtime package now also exposes a small browser-storage helper for project-scoped keys:
-
-```ts
-import { createProjectStorage } from '@taylorvance/tv-shared-runtime/storage';
-
-const storage = createProjectStorage('mcts-web', { version: 1 });
-
-const APP_STORAGE_KEY = storage.key('app');
-const getGameSessionStorageKey = (gameId: string) => storage.key('session', gameId);
-const clearSavedState = () => storage.clear();
-```
-
-Use this when a consumer needs `localStorage` on shared origins like localhost without colliding with sibling projects. With `version: 1`, keys are written as `mcts-web:v1:...`, which is equally valid in production.
-
-Each key part is percent-encoded before it is joined into the storage key, so `storage.key('a:b')` and `storage.key('a', 'b')` remain distinct.
-
-The storage helper also exposes `list()` and `clear()` for namespace-scoped inspection and reset flows. `list()` now includes both a human-readable `relativeKey` and an exact `keyParts` array for lossless tooling.
-
-For opt-in dev tooling, `@taylorvance/tv-shared-runtime/storage-dev` now exports `ProjectStorageInspector`, a small React browser for namespaced storage keys with raw editing, import/export JSON, remove, clear, refresh, and version switching support. Namespace JSON exports include `keyParts` so literal separator characters round-trip exactly.
-
-### Hotkeys
-
-The runtime package now also exports shared React hotkey hooks:
-
-```tsx
-import { useHotkeys, useKonami, useKeySequence } from '@taylorvance/tv-shared-runtime';
-
-export function GameSession() {
-  const hotkeyRef = useHotkeys<HTMLDivElement>([
-    { keys: 'r', callback: () => resetGame() },
-    { keys: 'z', callback: () => undoMove() },
-    { keys: 'x', callback: () => redoMove() },
-  ]);
-
-  useKonami(() => {
-    setDebugMode(true);
+export function FooterNotes() {
+  const [notes, setNotes] = usePersistentState(storage, ['footer', 'notes'], {
+    defaultValue: '',
   });
 
-  useKeySequence([
-    { sequence: ['d', 'e', 'b', 'u', 'g'], callback: () => setDebugMode(true) },
-    { sequence: ['r', 'g', 'b'], callback: () => setRainbowMode(true) },
-  ], { timeoutMs: 1_500 });
-
   return (
-    <section ref={hotkeyRef} tabIndex={-1}>
-      ...
-    </section>
+    <>
+      <BrandBadge />
+      <textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
+    </>
   );
 }
 ```
 
-If the returned ref is attached to a focusable container, the hotkeys are scoped to that region and remain active while focus stays inside descendants. If the ref is left unattached, the hotkeys remain global for the current document.
+## `@taylorvance/tv-shared-dev`
 
-`useKeySequence` shares the same scope and input-safety behavior as `useKonami`. Its `timeoutMs` default is `1000`, and that timeout applies between each correct key press rather than to the whole sequence.
+`@taylorvance/tv-shared-dev` is the published dev-time package for shared Node-side repo conventions.
 
-`useKonami` uses the standard shared sequence exported as `KONAMI_CODE_SEQUENCE`.
+Current surface includes:
 
-### Shared state helpers
+- `defineReactAppConfig()` for ESLint flat config
+- `prettierConfig`
+- shared TypeScript JSON baselines for React apps and Vite-side Node config
 
-The runtime package now also exposes a higher-level utility layer around those storage and hotkey primitives:
-- `usePersistentState()` for storage-backed React state with same-tab and cross-tab sync
-- `useUrlState()` for query-param or hash-param state
-- `useDebugFlag()` for storage-backed flags with optional URL overrides and hotkey toggles
-- `useShortcutRegistry()` plus `ShortcutPanel` for visible shortcut help without exposing hidden sequences
+Example ESLint config:
 
-These are still intentionally small. They help consumers stop rewriting the same persistence and shortcut plumbing without moving app-specific state models into `tv-shared`.
+```js
+import defineReactAppConfig from '@taylorvance/tv-shared-dev/eslint/react-app';
 
-### Snapshots, share, theme, and accessibility
-
-The runtime package now also includes:
-- codec helpers for storage and URL serialization
-- snapshot helpers for deterministic export/import flows
-- clipboard and Web Share helpers with fallback behavior
-- `useThemePreference()` and `useSystemTheme()` for persisted theme state
-- `usePrefersReducedMotion()` and `LiveAnnouncer` for lightweight accessibility plumbing
-
-The local playground now exercises these helpers together as a real consumer harness rather than only checking the badge and logo exports.
-
-## Shared assets
-
-Canonical shared asset files live at the repo top level in `assets/`.
-
-Current shared assets:
-- `assets/tv.svg`
-- `assets/tv.png`
-
-The runtime package copies these files into its published package during build so npm consumers can still import them through `@taylorvance/tv-shared-runtime`.
-
-### Build
-
-From the repo root:
-
-```bash
-npm install
-npm run verify
+export default [
+  ...defineReactAppConfig({
+    extraIgnores: ['public/generated/**'],
+  }),
+];
 ```
 
-For live visual development:
+Example TypeScript config:
 
-```bash
-npm run dev
+```json
+{
+  "extends": "@taylorvance/tv-shared-dev/tsconfig/react-app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client", "vitest/globals"]
+  },
+  "include": ["src"]
+}
 ```
 
-The playground is a real local consumer app under `apps/playground`. `npm run dev` runs both the runtime package watcher and the Vite app, so edits in `runtime/node/tv-shared-runtime` rebuild into `dist` and the playground consumes them through the same package boundary a real app would use. The Vite host config also allows the `tvmini` host header to match the local setup used in sibling repos.
+Repo-specific aliases, generated directories, and one-off rule exceptions should stay local to the consumer repo.
 
-The repo now verifies itself with:
-- ESLint
-- Vitest component tests
-- a built example consumer app under `apps/playground`
-- internal consumer fixtures for plain CSS and utility-class usage
-- a built-package smoke test against `runtime/node/tv-shared-runtime/dist`
+## Reusable Workflows
 
-Local hooks are also configured:
-- `pre-commit`: `lint-staged`
-- `pre-push`: check the upstream branch, run `npm run verify`, then check upstream again
+Consumers should keep thin repo-local workflow wrappers and call the shared workflow logic from this repo.
 
-## GitHub Pages workflow
+CI example:
 
-Reusable workflow path:
+```yml
+name: CI
 
-```text
-.github/workflows/deploy-pages.yml
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: taylorvance/tv-shared/.github/workflows/verify.yml@main
+    with:
+      node-version: '22'
+      working-directory: .
+      install-command: npm ci
+      lint-command: npm run lint
+      test-command: npm run test
+      build-command: npm run build
 ```
 
-The workflow accepts these inputs:
-- `node-version`
-- `working-directory`
-- `install-command`
-- `lint-command`
-- `test-command`
-- `build-command`
-- `artifact-path`
-
-Example consumer workflow:
+Pages example:
 
 ```yml
 name: Deploy
@@ -379,102 +144,36 @@ jobs:
   deploy:
     uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
-      node-version: '20'
+      node-version: '22'
       working-directory: .
       install-command: npm ci
       lint-command: npm run lint
-      test-command: npm test -- --run
+      test-command: npm run test
       build-command: npm run build
       artifact-path: dist
 ```
 
-Example copyable wrapper file:
+Copyable workflow wrappers also live in [`docs/examples/`](./docs/examples/README.md).
 
-```text
-docs/examples/deploy.yml
-```
+## Local Development
 
-## CI standard
+Useful scripts:
 
-Reusable CI workflow path:
+- `npm run dev`: rebuild `@taylorvance/tv-shared-web` and run the playground
+- `npm run test`: run repo tests
+- `npm run build`: build the shared web package
+- `npm run test:dist`: smoke-test the shared packages as published surfaces
+- `npm run doctor:consumers`: read-only audit of sibling consumer repos
 
-```text
-.github/workflows/verify.yml
-```
+The playground is a real local consumer app under `apps/playground`. It imports the web package through the same package boundary used by real apps.
+Root `npm install` also builds `@taylorvance/tv-shared-web` so workspace consumers resolve the published entrypoints without a separate manual build step.
 
-The recommended consumer contract is documented in:
-- `docs/consumer-standard.md`
-- `docs/adoption-plan.md`
-- `docs/release-strategy.md`
+## Consumer Rules
 
-At a minimum, future consumers should converge on:
-- `clean`
-- `lint`
-- `test`
-- `build`
-- `verify`
+The repo tries to enforce a strong long-term split:
 
-This repo also uses the standard itself via:
+- app-facing code belongs in `@taylorvance/tv-shared-web`
+- dev-time conventions belong in `@taylorvance/tv-shared-dev`
+- CI/CD logic belongs in `.github/workflows`
 
-```text
-.github/workflows/ci.yml
-```
-
-Example copyable wrapper file:
-
-```text
-docs/examples/ci.yml
-```
-
-## Node tooling
-
-Reusable Node and TypeScript baselines live under `tooling/node/`.
-
-Recommended consumer docs:
-- `docs/consumer-standard.md`
-- `tooling/node/examples/eslint.config.mjs`
-- `tooling/node/examples/prettier.config.mjs`
-- `tooling/node/examples/tsconfig.app.json`
-- `tooling/node/examples/tsconfig.node.json`
-
-## Release automation
-
-Release automation is now handled with Changesets.
-
-Key files:
-- `.changeset/config.json`
-- `.github/workflows/release.yml`
-- `docs/release-strategy.md`
-
-Key scripts:
-- `npm run changeset`
-- `npm run version-packages`
-- `npm run release`
-
-The release workflow:
-- verifies the repo on every `main` push
-- creates and pushes a version commit when pending changesets exist
-- publishes changed packages in that same run using npm trusted publishing via GitHub OIDC
-
-## Local hooks
-
-This repo uses local hook automation through `simple-git-hooks`.
-
-Current hook behavior:
-- `pre-commit`: run `lint-staged`
-- `pre-push`: fail if the branch is behind its upstream, run `npm run verify`, then fail again if the upstream moved during verification
-
-## Consumer repos to inspect before changing shared code
-
-Sibling paths from the local `dev` directory:
-- `../tvprograms`
-- `../mcts-web`
-- `../wordlink`
-
-## Notes
-
-Current duplication already confirmed:
-- `mcts-web/src/components/BrandBadge.tsx`
-- `wordlink/src/components/BrandBadge.tsx`
-
-The two apps use different styling approaches, so the shared component API does not assume one CSS system.
+If something is not importable as a package or directly referenceable as a workflow, it should not be presented as the primary shared contract.

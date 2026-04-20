@@ -1,0 +1,53 @@
+{
+  "name": "@taylorvance/tv-shared-dev",
+  "version": "0.1.0",
+  "description": "Shared dev-time config and tooling helpers for Taylor Vance web projects.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "default": "./index.js"
+    },
+    "./eslint/react-app": {
+      "import": "./eslint/react-app.js",
+      "default": "./eslint/react-app.js"
+    },
+    "./prettier": {
+      "import": "./prettier.js",
+      "default": "./prettier.js"
+    },
+    "./tsconfig/react-app.json": "./tsconfig/react-app.json",
+    "./tsconfig/vite-node.json": "./tsconfig/vite-node.json"
+  },
+  "files": [
+    "eslint",
+    "index.js",
+    "prettier.js",
+    "README.md",
+    "tsconfig"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules coverage .vite .eslintcache *.tsbuildinfo"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taylorvance/tv-shared",
+    "directory": "dev/node"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "typescript-eslint": "^8.46.4"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.5.0 || ^6.0.0"
+  }
+}

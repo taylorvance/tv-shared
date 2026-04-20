@@ -1,4 +1,4 @@
-const prettierConfig = {
+export const prettierConfig = {
   semi: true,
   singleQuote: true,
   trailingComma: 'all',

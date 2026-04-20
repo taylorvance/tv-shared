@@ -1,6 +1,6 @@
-# `@taylorvance/tv-shared-runtime`
+# `@taylorvance/tv-shared-web`
 
-Shared React runtime primitives for Taylor Vance portfolio projects.
+Shared web runtime primitives for Taylor Vance portfolio projects.
 
 The package stays intentionally small. It is meant to hold stable cross-app building blocks, not app shells or business logic.
 
@@ -22,21 +22,21 @@ Root exports:
 
 Explicit subpaths:
 
-- `@taylorvance/tv-shared-runtime/BrandBadge`
-- `@taylorvance/tv-shared-runtime/TvProgramsWordmark`
-- `@taylorvance/tv-shared-runtime/assets`
-- `@taylorvance/tv-shared-runtime/codecs`
-- `@taylorvance/tv-shared-runtime/storage`
-- `@taylorvance/tv-shared-runtime/persistent-state`
-- `@taylorvance/tv-shared-runtime/url-state`
-- `@taylorvance/tv-shared-runtime/debug-flags`
-- `@taylorvance/tv-shared-runtime/shortcuts`
-- `@taylorvance/tv-shared-runtime/hotkeys`
-- `@taylorvance/tv-shared-runtime/share`
-- `@taylorvance/tv-shared-runtime/snapshots`
-- `@taylorvance/tv-shared-runtime/theme`
-- `@taylorvance/tv-shared-runtime/a11y`
-- `@taylorvance/tv-shared-runtime/storage-dev`
+- `@taylorvance/tv-shared-web/BrandBadge`
+- `@taylorvance/tv-shared-web/TvProgramsWordmark`
+- `@taylorvance/tv-shared-web/assets`
+- `@taylorvance/tv-shared-web/codecs`
+- `@taylorvance/tv-shared-web/storage`
+- `@taylorvance/tv-shared-web/persistent-state`
+- `@taylorvance/tv-shared-web/url-state`
+- `@taylorvance/tv-shared-web/debug-flags`
+- `@taylorvance/tv-shared-web/shortcuts`
+- `@taylorvance/tv-shared-web/hotkeys`
+- `@taylorvance/tv-shared-web/share`
+- `@taylorvance/tv-shared-web/snapshots`
+- `@taylorvance/tv-shared-web/theme`
+- `@taylorvance/tv-shared-web/a11y`
+- `@taylorvance/tv-shared-web/storage-dev`
 
 ## Design goals
 
@@ -51,7 +51,7 @@ Explicit subpaths:
 Default badge:
 
 ```tsx
-import { BrandBadge } from '@taylorvance/tv-shared-runtime';
+import { BrandBadge } from '@taylorvance/tv-shared-web';
 
 export function Footer() {
   return <BrandBadge />;
@@ -61,7 +61,7 @@ export function Footer() {
 Wordmark:
 
 ```tsx
-import { TvProgramsWordmark } from '@taylorvance/tv-shared-runtime';
+import { TvProgramsWordmark } from '@taylorvance/tv-shared-web';
 
 export function Header() {
   return <TvProgramsWordmark />;
@@ -71,7 +71,7 @@ export function Header() {
 Consumer-owned styling:
 
 ```tsx
-import { TvProgramsWordmark } from '@taylorvance/tv-shared-runtime';
+import { TvProgramsWordmark } from '@taylorvance/tv-shared-web';
 
 export function Header() {
   return (
@@ -88,7 +88,7 @@ export function Header() {
 Raw asset subpaths remain available:
 
 ```tsx
-import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
+import tvMarkUrl from '@taylorvance/tv-shared-web/tv.svg';
 ```
 
 ## Storage and state
@@ -96,7 +96,7 @@ import tvMarkUrl from '@taylorvance/tv-shared-runtime/tv.svg';
 Use `createProjectStorage()` for namespaced `localStorage` keys on shared origins such as localhost:
 
 ```ts
-import { createProjectStorage } from '@taylorvance/tv-shared-runtime/storage';
+import { createProjectStorage } from '@taylorvance/tv-shared-web/storage';
 
 const storage = createProjectStorage('wordlink', { version: 1 });
 ```
@@ -109,7 +109,7 @@ For React state backed by that namespace:
 import {
   createStringCodec,
   usePersistentState,
-} from '@taylorvance/tv-shared-runtime';
+} from '@taylorvance/tv-shared-web';
 
 const storage = createProjectStorage('wordlink', { version: 1 });
 
@@ -131,7 +131,7 @@ export function NotesPanel() {
 For shareable URL state:
 
 ```tsx
-import { createStringCodec, useUrlState } from '@taylorvance/tv-shared-runtime';
+import { createStringCodec, useUrlState } from '@taylorvance/tv-shared-web';
 
 export function InspectorTabs() {
   const [tab, setTab] = useUrlState('tab', {
@@ -150,7 +150,7 @@ export function InspectorTabs() {
 Use `useDebugFlag()` when a flag should be storage-backed, optionally overridable by a URL param, and optionally toggleable by a hotkey:
 
 ```tsx
-import { useDebugFlag } from '@taylorvance/tv-shared-runtime';
+import { useDebugFlag } from '@taylorvance/tv-shared-web';
 
 export function SessionDebug({ storage }: { storage: ProjectStorage }) {
   const debugGrid = useDebugFlag<HTMLDivElement>('grid', {
@@ -173,7 +173,7 @@ export function SessionDebug({ storage }: { storage: ProjectStorage }) {
 For a reusable visible-shortcuts list, keep one shortcut definition source of truth and pass the visible subset into `ShortcutPanel`:
 
 ```tsx
-import { ShortcutPanel, useShortcutRegistry } from '@taylorvance/tv-shared-runtime';
+import { ShortcutPanel, useShortcutRegistry } from '@taylorvance/tv-shared-web';
 
 export function ShortcutHelp() {
   const shortcuts = useShortcutRegistry([
@@ -198,7 +198,7 @@ import {
   copySnapshotToClipboard,
   parseSnapshot,
   serializeSnapshot,
-} from '@taylorvance/tv-shared-runtime';
+} from '@taylorvance/tv-shared-web';
 
 const snapshot = serializeSnapshot({ seed: '123', moves: ['A1-B2'] }, {
   kind: 'session',
@@ -212,7 +212,7 @@ await copySnapshotToClipboard(parsed.value, { kind: 'session', version: 1 });
 For generic clipboard/share flows:
 
 ```tsx
-import { shareContent } from '@taylorvance/tv-shared-runtime';
+import { shareContent } from '@taylorvance/tv-shared-web';
 
 await shareContent({
   title: 'wordlink',
@@ -230,7 +230,7 @@ Theme preference helper:
 import {
   createProjectStorage,
   useThemePreference,
-} from '@taylorvance/tv-shared-runtime';
+} from '@taylorvance/tv-shared-web';
 
 const storage = createProjectStorage('wordlink', { version: 1 });
 
@@ -248,13 +248,13 @@ export function ThemeToggle() {
 Reduced motion:
 
 ```tsx
-import { usePrefersReducedMotion } from '@taylorvance/tv-shared-runtime';
+import { usePrefersReducedMotion } from '@taylorvance/tv-shared-web';
 ```
 
 Live announcements:
 
 ```tsx
-import { LiveAnnouncer, useLiveAnnouncer } from '@taylorvance/tv-shared-runtime';
+import { LiveAnnouncer, useLiveAnnouncer } from '@taylorvance/tv-shared-web';
 ```
 
 These helpers are intentionally light. They handle system-preference and announcement plumbing, while the consumer app still decides what to animate, theme, or announce.
@@ -264,7 +264,7 @@ These helpers are intentionally light. They handle system-preference and announc
 For dev-only inspection, manual edits, and namespace JSON import/export, use the explicit `storage-dev` entry:
 
 ```tsx
-import { ProjectStorageInspector } from '@taylorvance/tv-shared-runtime/storage-dev';
+import { ProjectStorageInspector } from '@taylorvance/tv-shared-web/storage-dev';
 ```
 
 This inspector is meant for local tooling and debug screens, not default production UI.

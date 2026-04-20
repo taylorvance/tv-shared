@@ -16,12 +16,12 @@ import {
   useShortcutRegistry,
   useThemePreference,
   useUrlState,
-} from '@taylorvance/tv-shared-runtime';
+} from '@taylorvance/tv-shared-web';
 import {
   TVPROGRAMS_MARK_PNG_URL,
   TVPROGRAMS_MARK_SVG_URL,
-} from '@taylorvance/tv-shared-runtime/assets';
-import tvMarkSubpathUrl from '@taylorvance/tv-shared-runtime/tv.svg';
+} from '@taylorvance/tv-shared-web/assets';
+import tvMarkSubpathUrl from '@taylorvance/tv-shared-web/tv.svg';
 
 const playgroundStorage = createProjectStorage('tv-shared-playground', { version: 1 });
 

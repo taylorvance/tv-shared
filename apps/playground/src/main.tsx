@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { LiveAnnouncer } from '@taylorvance/tv-shared-runtime';
+import { LiveAnnouncer } from '@taylorvance/tv-shared-web';
 import App from './App';
 import './index.css';
 

@@ -1,4 +1,15 @@
-# @taylorvance/tv-shared-runtime
+# @taylorvance/tv-shared-web
+
+## 0.7.0
+
+### Minor Changes
+
+- Rename the shared app-facing package to `@taylorvance/tv-shared-web` and establish `@taylorvance/tv-shared-dev` as the supported shared package for ESLint, Prettier, and TypeScript conventions.
+- 68831f0: Add shared state, debug, shortcut, snapshot, share, theme, accessibility, and wordmark primitives.
+
+### Patch Changes
+
+- 0bd0d90: Fix storage key collisions for literal separator characters, preserve exact key parts in storage inspector exports, and correct array-bound hotkey punctuation matching.
 
 ## 0.7.0
 
@@ -32,7 +43,7 @@
 
 ### Minor Changes
 
-- 8da67a8: Establish the new runtime and tooling architecture by publishing the shared React/browser package from `runtime/node/tv-shared-runtime`, renaming the runtime package to `@taylorvance/tv-shared-runtime`, and aligning repo docs and workflows to the new layout.
+- 8da67a8: Establish the shared web package architecture, publish the shared React/browser package, and align repo docs and workflows around the current layout.
 
 ## 0.2.0
 

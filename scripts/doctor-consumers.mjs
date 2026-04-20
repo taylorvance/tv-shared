@@ -75,7 +75,7 @@ const getAppSourceStatus = async (repoPath) => {
   const joinedSource = fileContents.filter(Boolean).join('\n');
 
   return {
-    usesRuntimePackage: joinedSource.includes('@taylorvance/tv-shared-runtime'),
+    usesWebPackage: joinedSource.includes('@taylorvance/tv-shared-web'),
     usesUiPackage: joinedSource.includes('@taylorvance/tv-shared-ui'),
   };
 };
@@ -103,13 +103,14 @@ for(const repoName of repoNames) {
   const sourceStatus = await getAppSourceStatus(repoPath);
 
   console.log(`${repoName}:`);
-  console.log(`  runtime package: ${dependencies['@taylorvance/tv-shared-runtime'] ?? 'no'}`);
+  console.log(`  web package: ${dependencies['@taylorvance/tv-shared-web'] ?? 'no'}`);
+  console.log(`  dev package: ${dependencies['@taylorvance/tv-shared-dev'] ?? 'no'}`);
   console.log(`  legacy ui package: ${dependencies['@taylorvance/tv-shared-ui'] ?? 'no'}`);
   console.log(`  legacy config package: ${dependencies['@taylorvance/tv-shared-config'] ?? 'no'}`);
   console.log(`  verify script: ${formatFlag(Boolean(packageJson.scripts?.verify))}`);
   console.log(`  shared verify workflow: ${formatFlag(workflowStatus.sharedVerifyWorkflow)}`);
   console.log(`  shared deploy workflow: ${formatFlag(workflowStatus.sharedDeployWorkflow)}`);
-  console.log(`  source imports runtime: ${formatFlag(sourceStatus.usesRuntimePackage)}`);
+  console.log(`  source imports web: ${formatFlag(sourceStatus.usesWebPackage)}`);
   console.log(`  source imports legacy ui: ${formatFlag(sourceStatus.usesUiPackage)}`);
   console.log('');
 }

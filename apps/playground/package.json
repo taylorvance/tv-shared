@@ -7,10 +7,12 @@
     "clean": "rm -rf dist node_modules coverage .vite .eslintcache *.tsbuildinfo",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predev": "npm --prefix ../.. run build:web",
+    "prebuild": "npm --prefix ../.. run build:web"
   },
   "dependencies": {
-    "@taylorvance/tv-shared-runtime": "*",
+    "@taylorvance/tv-shared-web": "*",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

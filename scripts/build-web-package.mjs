@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptsDir, '..');
-const packageRoot = path.join(repoRoot, 'runtime', 'node', 'tv-shared-runtime');
+const packageRoot = path.join(repoRoot, 'runtime', 'web');
 const sourceAssetsDir = path.join(repoRoot, 'assets');
 const packageAssetsDir = path.join(packageRoot, 'assets');
 const distDir = path.join(packageRoot, 'dist');

@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Repo purpose
-This repo owns shared runtime code, reusable tooling baselines, and reusable GitHub workflow logic for Taylor Vance portfolio projects.
+This repo owns shared web runtime code, shared dev-time conventions, and reusable GitHub workflow logic for Taylor Vance portfolio projects.
 
 It is not an app. It is a dependency source for sibling repos such as:
 - `../tvprograms`
@@ -18,9 +18,9 @@ It is not an app. It is a dependency source for sibling repos such as:
 - Prefer official GitHub Pages actions over third-party deploy actions unless a concrete gap exists.
 
 ## Initial priorities
-1. Build one shared runtime package for reusable app code.
-2. Extract `BrandBadge` and shared TV Programs logo assets first.
-3. Add a reusable GitHub Pages deploy workflow in `.github/workflows`.
+1. Keep one shared web package for reusable app code.
+2. Keep one shared dev package for reusable Node-side repo conventions.
+3. Keep reusable GitHub Pages and verify workflows in `.github/workflows`.
 4. Document consumer usage in the README whenever shared APIs change.
 
 ## Extraction guidance
@@ -30,10 +30,10 @@ It is not an app. It is a dependency source for sibling repos such as:
 - Avoid locking the package to one visual treatment; provide sensible defaults and allow consumer overrides.
 
 ## Publishing guidance
-- Assume the runtime package may be published independently from the apps.
+- Assume the shared packages may be published independently from the apps.
 - Keep package boundaries clean so versioning and semver are straightforward.
 - Do not make consumer repos depend on `tvprograms` directly for shared assets or components.
-- When a change affects the published package `@taylorvance/tv-shared-runtime`, create a Changeset in the same change unless the user explicitly says not to.
+- When a change affects a published package such as `@taylorvance/tv-shared-web` or `@taylorvance/tv-shared-dev`, create a Changeset in the same change unless the user explicitly says not to.
 - Do not create Changesets for docs-only, workflow-only, or internal tooling changes that do not affect the published package.
 
 ## Session startup checklist

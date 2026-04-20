@@ -1,10 +1,11 @@
 # Consumer Standard
 
-This repo defines the shared contract for portfolio-project consumers.
+This repo defines the shared contract for Taylor Vance portfolio-project consumers.
 
-## Gold standard
+## Scripts
 
-Each consumer repo should expose these scripts when practical:
+Each consumer should expose these scripts when practical:
+
 - `npm run clean`
 - `npm run dev`
 - `npm run lint`
@@ -13,11 +14,12 @@ Each consumer repo should expose these scripts when practical:
 - `npm run verify`
 
 Recommended behavior:
-- `clean` should remove dependency installs, build artifacts, caches, and other reproducible generated files.
-- `dev` should be the default local entrypoint. For Vite apps that need LAN or Tailscale access, prefer folding host binding into `dev` instead of maintaining a separate `dev:host`.
-- `build` must include any preprocess step the app needs.
-- `test` must be non-watch in CI. If the repo keeps `vitest` in watch mode locally, the workflow should pass an explicit CI-safe command such as `npm test -- --run`.
-- `verify` should be the full local quality gate: lint, test, then build.
+
+- `clean` removes installs, build artifacts, caches, and other reproducible generated files
+- `dev` is the default local entrypoint
+- `build` includes any preprocess step the app needs
+- `test` is non-watch in CI
+- `verify` is the local quality gate: lint, test, then build
 
 Suggested shape:
 
@@ -34,143 +36,106 @@ Suggested shape:
 }
 ```
 
-For workspace repos, prefer a root dispatcher plus package-local `clean` scripts:
+## Shared Dev Package
 
-```json
-{
-  "scripts": {
-    "clean": "npm run clean:workspaces && npm run clean:root",
-    "clean:root": "rm -rf node_modules coverage .turbo .vite .eslintcache *.tsbuildinfo",
-    "clean:workspaces": "npm run clean --workspaces --if-present"
-  }
-}
-```
+Consumers should prefer `@taylorvance/tv-shared-dev` for shared Node-side conventions.
 
-## Node tooling baselines
-
-Consumers should copy and adapt the Node tooling baselines from this repo rather than depending on a shared config package.
-
-Recommended ESLint setup for Vite + React apps:
+### ESLint
 
 ```js
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import defineReactAppConfig from '@taylorvance/tv-shared-dev/eslint/react-app';
 
-export default tseslint.config(
-  { ignores: ['dist/**'] },
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+export default [
+  ...defineReactAppConfig({
+    extraIgnores: ['public/generated/**'],
+  }),
   {
-    files: ['src/**/*.{ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: { jsx: true }
-      },
-      globals: {
-        ...globals.browser
-      }
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh
-    },
+    files: ['src/games/Onitama/Board.tsx'],
     rules: {
-      ...reactHooks.configs.flat.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'no-undef': 'off'
-    }
-  }
-)
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
+];
 ```
 
-Recommended TypeScript setup:
+### Prettier
+
+```js
+import { prettierConfig } from '@taylorvance/tv-shared-dev';
+
+export default prettierConfig;
+```
+
+### TypeScript
+
+App config:
 
 ```json
 {
+  "extends": "@taylorvance/tv-shared-dev/tsconfig/react-app.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": ["src"]
 }
 ```
 
-Recommended Prettier setup:
-
-```js
-const prettierConfig = {
-  semi: true,
-  singleQuote: true,
-  trailingComma: 'all'
-}
-
-export default prettierConfig
-```
-
-Recommended Node-side TypeScript setup:
+Node-side Vite config:
 
 ```json
 {
+  "extends": "@taylorvance/tv-shared-dev/tsconfig/vite-node.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2023"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
   },
   "include": ["vite.config.ts"]
 }
 ```
 
-Consumer-owned settings should stay local:
+Settings that should stay local:
+
 - `baseUrl`
 - `paths`
-- test globals and other repo-specific `types`
-- generated-file ignores such as `public/generated/**`
-- niche compiler flags that only one app needs
+- repo-specific generated directories
+- test globals unique to one app
+- niche compiler flags or rule exceptions that are not actually shared
 
-Copyable examples live in:
-- `tooling/node/examples/eslint.config.mjs`
-- `tooling/node/examples/prettier.config.mjs`
-- `tooling/node/examples/tsconfig.app.json`
-- `tooling/node/examples/tsconfig.node.json`
+## Shared Web Package
 
-## Reusable workflows
+Consumers should use `@taylorvance/tv-shared-web` for shared app-facing code.
+
+Current common uses:
+
+- `BrandBadge`
+- `TvProgramsMark` / `TvProgramsWordmark`
+- `createProjectStorage()`
+- `usePersistentState()`
+- `useUrlState()`
+- `useHotkeys()`
+
+Example:
+
+```tsx
+import { BrandBadge, createProjectStorage } from '@taylorvance/tv-shared-web';
+
+const storage = createProjectStorage('mcts-web', { version: 1 });
+
+export function Footer() {
+  return <BrandBadge />;
+}
+```
+
+## Reusable Workflows
 
 Consumers should call these workflows from this repo:
+
 - `tv-shared/.github/workflows/verify.yml`
 - `tv-shared/.github/workflows/deploy-pages.yml`
 
-Copyable examples live in:
-- `docs/examples/ci.yml`
-- `docs/examples/deploy.yml`
+Copyable wrappers live in `docs/examples/`.
 
-Example CI workflow:
+CI example:
 
 ```yml
 name: CI
@@ -187,15 +152,15 @@ jobs:
   verify:
     uses: taylorvance/tv-shared/.github/workflows/verify.yml@main
     with:
-      node-version: '20'
+      node-version: '22'
       working-directory: .
       install-command: npm ci
       lint-command: npm run lint
-      test-command: npm run test -- --run
+      test-command: npm run test
       build-command: npm run build
 ```
 
-Example Pages workflow:
+Deploy example:
 
 ```yml
 name: Deploy
@@ -214,56 +179,11 @@ jobs:
   deploy:
     uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
     with:
-      node-version: '20'
+      node-version: '22'
       working-directory: .
       install-command: npm ci
       lint-command: npm run lint
-      test-command: npm run test -- --run
+      test-command: npm run test
       build-command: npm run build
       artifact-path: dist
 ```
-
-## Pre-commit standard
-
-Hooks should stay local to each consumer repo. The shared contract is what they run, not the raw `.git/hooks` files.
-
-Recommended setup:
-- `pre-commit`: run `lint-staged`
-- `pre-push`: optionally fail if the branch is behind its upstream, run `npm run verify`, then fail again if the upstream moved during verification
-
-Recommended tools:
-- `simple-git-hooks`
-- `lint-staged`
-
-Suggested package.json additions:
-
-```json
-{
-  "scripts": {
-    "verify": "npm run lint && npm run test && npm run build",
-    "verify:push": "node scripts/pre-push-check.mjs && npm run verify && node scripts/pre-push-check.mjs",
-    "prepare": "simple-git-hooks"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged",
-    "pre-push": "npm run verify:push"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint --fix"
-  }
-}
-```
-
-This keeps hook ownership local while still converging on one quality gate across projects.
-
-`tv-shared` itself now uses this exact pattern.
-
-## Repo-level audit helper
-
-From this repo, run `npm run doctor:consumers` to get a read-only adoption snapshot of sibling consumer repos:
-- runtime package usage
-- moved-from `tv-shared-ui` usage and frozen `tv-shared-config` usage
-- `verify` script presence
-- shared workflow wrapper usage
-
-It is a maintenance aid for this repo only. It does not modify sibling repos.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrandBadge } from '../../runtime/node/tv-shared-runtime/src/index.js';
+import { BrandBadge } from '../../runtime/web/src/index.js';
 import './brand-badge.css';
 
 export function PlainCssBrandBadge() {
