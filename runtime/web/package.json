@@ -1,6 +1,6 @@
 {
   "name": "@taylorvance/tv-shared-web",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Shared React runtime primitives for Taylor Vance portfolio projects.",
   "type": "module",
   "sideEffects": false,

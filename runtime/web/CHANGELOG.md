@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-web
 
+## 0.7.2
+
+### Patch Changes
+
+- 9aa2c29: Normalize arrow-key aliases when matching binding-array hotkey events.
+
 ## 0.7.1
 
 ### Patch Changes
