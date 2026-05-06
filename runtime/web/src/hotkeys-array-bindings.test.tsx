@@ -10,6 +10,21 @@ vi.mock('react-hotkeys-hook', () => ({
 }));
 
 import { useHotkeys } from './hotkeys.js';
+import { useShortcutRegistry } from './shortcuts.js';
+
+type SharedHotkeysEvent = {
+  alt?: boolean;
+  ctrl?: boolean;
+  keys?: readonly string[];
+  meta?: boolean;
+  mod?: boolean;
+  shift?: boolean;
+};
+
+type MockHotkeysCallback = (
+  event: KeyboardEvent,
+  hotkeyEvent: SharedHotkeysEvent,
+) => void;
 
 describe('useHotkeys array bindings', () => {
   beforeEach(() => {
@@ -33,14 +48,7 @@ describe('useHotkeys array bindings', () => {
 
     const [flattenedKeys, callback] = mockUseLibraryHotkeys.mock.calls[0] as [
       string[],
-      (event: KeyboardEvent, hotkeyEvent: {
-        alt?: boolean;
-        ctrl?: boolean;
-        keys?: readonly string[];
-        meta?: boolean;
-        mod?: boolean;
-        shift?: boolean;
-      }) => void,
+      MockHotkeysCallback,
     ];
 
     expect(flattenedKeys).toEqual(['r', '-']);
@@ -74,14 +82,7 @@ describe('useHotkeys array bindings', () => {
 
     const [flattenedKeys, callback] = mockUseLibraryHotkeys.mock.calls[0] as [
       string[],
-      (event: KeyboardEvent, hotkeyEvent: {
-        alt?: boolean;
-        ctrl?: boolean;
-        keys?: readonly string[];
-        meta?: boolean;
-        mod?: boolean;
-        shift?: boolean;
-      }) => void,
+      MockHotkeysCallback,
     ];
 
     expect(flattenedKeys).toEqual(['ctrl-+']);
@@ -96,5 +97,102 @@ describe('useHotkeys array bindings', () => {
     });
 
     expect(onZoom).toHaveBeenCalledTimes(1);
+  });
+
+  it('matches left bindings when the library reports ArrowLeft event keys', () => {
+    const onLeft = vi.fn();
+
+    const Example = () => {
+      useHotkeys([{ keys: 'left', callback: onLeft }]);
+
+      return <div>Hotkeys</div>;
+    };
+
+    render(<Example />);
+
+    const [flattenedKeys, callback] = mockUseLibraryHotkeys.mock.calls[0] as [
+      string[],
+      MockHotkeysCallback,
+    ];
+
+    expect(flattenedKeys).toEqual(['left']);
+
+    callback(new KeyboardEvent('keydown', { key: 'ArrowLeft' }), {
+      alt: false,
+      ctrl: false,
+      keys: ['arrowleft'],
+      meta: false,
+      mod: false,
+      shift: false,
+    });
+
+    expect(onLeft).toHaveBeenCalledTimes(1);
+  });
+
+  it('matches shifted left bindings when the library reports ArrowLeft event keys', () => {
+    const onShiftLeft = vi.fn();
+
+    const Example = () => {
+      useHotkeys([{ keys: 'shift+left', callback: onShiftLeft }]);
+
+      return <div>Hotkeys</div>;
+    };
+
+    render(<Example />);
+
+    const [flattenedKeys, callback] = mockUseLibraryHotkeys.mock.calls[0] as [
+      string[],
+      MockHotkeysCallback,
+    ];
+
+    expect(flattenedKeys).toEqual(['shift+left']);
+
+    callback(new KeyboardEvent('keydown', { key: 'ArrowLeft', shiftKey: true }), {
+      alt: false,
+      ctrl: false,
+      keys: ['arrowleft'],
+      meta: false,
+      mod: false,
+      shift: true,
+    });
+
+    expect(onShiftLeft).toHaveBeenCalledTimes(1);
+  });
+
+  it('matches shortcut registry left bindings when the library reports ArrowLeft event keys', () => {
+    const onLeft = vi.fn();
+
+    const Example = () => {
+      useShortcutRegistry<HTMLDivElement>([
+        {
+          id: 'previous',
+          keys: 'left',
+          label: 'Previous',
+          onTrigger: onLeft,
+        },
+      ]);
+
+      return <div>Shortcuts</div>;
+    };
+
+    render(<Example />);
+
+    const [flattenedKeys, callback] = mockUseLibraryHotkeys.mock.calls[0] as [
+      string[],
+      MockHotkeysCallback,
+    ];
+
+    expect(flattenedKeys).toEqual(['left']);
+
+    callback(new KeyboardEvent('keydown', { key: 'ArrowLeft' }), {
+      alt: false,
+      ctrl: false,
+      keys: ['arrowleft'],
+      meta: false,
+      mod: false,
+      shift: false,
+    });
+
+    expect(onLeft).toHaveBeenCalledTimes(1);
   });
 });

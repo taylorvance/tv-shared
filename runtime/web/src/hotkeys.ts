@@ -37,6 +37,10 @@ const hotkeyKeyAliases: Record<string, string> = {
   ' ': 'space',
   altleft: 'alt',
   altright: 'alt',
+  arrowdown: 'down',
+  arrowleft: 'left',
+  arrowright: 'right',
+  arrowup: 'up',
   cmd: 'meta',
   command: 'meta',
   control: 'ctrl',
@@ -103,11 +107,10 @@ const isDependencyList = (value: DependencyList | Options | undefined): value is
 );
 
 const normalizeKey = (key: string): string => {
-  const alias = hotkeyKeyAliases[key];
+  const normalizedKey = key.trim().toLowerCase();
+  const alias = hotkeyKeyAliases[normalizedKey];
 
-  return (alias ?? key)
-    .trim()
-    .toLowerCase()
+  return (alias ?? normalizedKey)
     .replace(/key|digit|numpad|arrow/g, '');
 };
 
@@ -131,7 +134,7 @@ const normalizeHotkey = (
 };
 
 const matchesHotkey = (event: SharedHotkeysEvent, hotkey: NormalizedHotkey): boolean => {
-  const eventKeys = [...(event.keys ?? [])];
+  const eventKeys = [...(event.keys ?? [])].map((key) => normalizeKey(key));
 
   return event.alt === hotkey.alt
     && event.ctrl === hotkey.ctrl
