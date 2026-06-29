@@ -1,5 +1,11 @@
 # @taylorvance/tv-shared-web
 
+## 0.8.0
+
+### Minor Changes
+
+- 814b2f5: Add a reusable SourceBadge component for linking portfolio apps to source repositories.
+
 ## 0.7.2
 
 ### Patch Changes
