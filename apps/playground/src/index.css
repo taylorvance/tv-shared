@@ -262,6 +262,29 @@ html[data-theme='dark'] .custom-wordmark {
   color: #e2e8f0;
 }
 
+.custom-source-badge {
+  align-items: center;
+  background: #111827;
+  border-radius: 8px;
+  color: #f9fafb;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 800;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  text-decoration: none;
+}
+
+.custom-source-badge-icon {
+  display: block;
+  height: 1.05rem;
+  width: 1.05rem;
+}
+
+.custom-source-badge-label {
+  line-height: 1;
+}
+
 .asset-mark,
 .component-mark {
   display: block;

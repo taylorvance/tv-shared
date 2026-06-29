@@ -4,6 +4,12 @@ export {
   type BrandBadgeProps,
 } from './BrandBadge.js';
 export {
+  SourceBadge,
+  sourceBadgeClassNames,
+  type SourceBadgeIconName,
+  type SourceBadgeProps,
+} from './SourceBadge.js';
+export {
   TVPROGRAMS_DEFAULT_LABEL,
   TVPROGRAMS_HOSTNAME,
   TVPROGRAMS_URL,

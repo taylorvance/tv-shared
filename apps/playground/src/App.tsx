@@ -7,6 +7,7 @@ import {
   serializeSnapshot,
   shareContent,
   ShortcutPanel,
+  SourceBadge,
   TvProgramsMark,
   TvProgramsWordmark,
   useDebugFlag,
@@ -156,6 +157,7 @@ function App() {
           <p>Quick sanity check for the shared badge, mark, and wordmark exports.</p>
           <div className="demo-row">
             <BrandBadge />
+            <SourceBadge href="https://github.com/taylorvance/tv-shared" />
             <TvProgramsWordmark />
             <TvProgramsMark title="TV Programs" className="component-mark" />
           </div>
@@ -282,6 +284,33 @@ function App() {
             <div className="regression-case">
               <span className="case-label">Custom href</span>
               <BrandBadge href="https://example.com/demo" label="example.com/demo" />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">GitHub autodetect</span>
+              <SourceBadge href="https://github.com/taylorvance/tv-shared" />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">Generic source</span>
+              <SourceBadge href="https://git.example.com/taylorvance/tv-shared" />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">Explicit icon</span>
+              <SourceBadge
+                href="https://github.com/taylorvance/tv-shared"
+                iconName="code"
+                label="View source"
+              />
+            </div>
+            <div className="regression-case">
+              <span className="case-label">Unstyled source</span>
+              <SourceBadge
+                className="custom-source-badge"
+                href="https://github.com/taylorvance/tv-shared"
+                iconClassName="custom-source-badge-icon"
+                iconName="git-branch"
+                labelClassName="custom-source-badge-label"
+                unstyled
+              />
             </div>
             <div className="regression-case dark-case">
               <span className="case-label">Dark surface</span>

@@ -18,6 +18,11 @@
       "import": "./dist/BrandBadge.js",
       "default": "./dist/BrandBadge.js"
     },
+    "./SourceBadge": {
+      "types": "./dist/SourceBadge.d.ts",
+      "import": "./dist/SourceBadge.js",
+      "default": "./dist/SourceBadge.js"
+    },
     "./TvProgramsWordmark": {
       "types": "./dist/TvProgramsWordmark.d.ts",
       "import": "./dist/TvProgramsWordmark.js",
@@ -110,7 +115,8 @@
     "directory": "runtime/web"
   },
   "dependencies": {
-    "react-hotkeys-hook": "^5.1.0"
+    "react-hotkeys-hook": "^5.1.0",
+    "react-icons": "^5.6.0"
   },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0"

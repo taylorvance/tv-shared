@@ -10,7 +10,7 @@ The canonical TV Programs logo files live in the repo-level `assets/` directory 
 
 Root exports:
 
-- brand primitives: `BrandBadge`, `TvProgramsMark`, `TvProgramsWordmark`
+- brand and source primitives: `BrandBadge`, `SourceBadge`, `TvProgramsMark`, `TvProgramsWordmark`
 - shared branding constants: `TVPROGRAMS_URL`, `TVPROGRAMS_HOSTNAME`, `TVPROGRAMS_DEFAULT_LABEL`
 - styling hooks: `brandBadgeClassNames`, `tvProgramsWordmarkClassNames`
 - storage: `createProjectStorage`, `usePersistentState`
@@ -23,6 +23,7 @@ Root exports:
 Explicit subpaths:
 
 - `@taylorvance/tv-shared-web/BrandBadge`
+- `@taylorvance/tv-shared-web/SourceBadge`
 - `@taylorvance/tv-shared-web/TvProgramsWordmark`
 - `@taylorvance/tv-shared-web/assets`
 - `@taylorvance/tv-shared-web/codecs`
@@ -46,7 +47,7 @@ Explicit subpaths:
 - Prefer composable hooks and helpers over broad abstractions.
 - Let consumer apps keep ownership of layout and domain logic.
 
-## Brand primitives
+## Brand And Source Primitives
 
 Default badge:
 
@@ -57,6 +58,18 @@ export function Footer() {
   return <BrandBadge />;
 }
 ```
+
+Source badge:
+
+```tsx
+import { SourceBadge } from '@taylorvance/tv-shared-web';
+
+export function Footer() {
+  return <SourceBadge href="https://github.com/taylorvance/wordlink" />;
+}
+```
+
+`SourceBadge` automatically uses the GitHub icon for `github.com` links and falls back to a generic code icon for other hosts. Use `iconName="code"`, `iconName="github"`, or `iconName="git-branch"` to force a specific preset. Consumers can also pass a custom `icon`.
 
 Wordmark:
 

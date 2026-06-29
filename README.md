@@ -33,7 +33,7 @@ Legacy package names are no longer the preferred path:
 
 Current surface includes:
 
-- brand primitives: `BrandBadge`, `TvProgramsMark`, `TvProgramsWordmark`
+- brand and source primitives: `BrandBadge`, `SourceBadge`, `TvProgramsMark`, `TvProgramsWordmark`
 - shared branding constants and raw asset subpaths
 - project-scoped storage and persistent state helpers
 - URL state, debug flag, shortcut, snapshot, share, theme, and accessibility helpers
@@ -41,7 +41,12 @@ Current surface includes:
 Example:
 
 ```tsx
-import { BrandBadge, createProjectStorage, usePersistentState } from '@taylorvance/tv-shared-web';
+import {
+  BrandBadge,
+  SourceBadge,
+  createProjectStorage,
+  usePersistentState,
+} from '@taylorvance/tv-shared-web';
 
 const storage = createProjectStorage('wordlink', { version: 1 });
 
@@ -53,6 +58,7 @@ export function FooterNotes() {
   return (
     <>
       <BrandBadge />
+      <SourceBadge href="https://github.com/taylorvance/wordlink" />
       <textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
     </>
   );

@@ -108,6 +108,7 @@ Consumers should use `@taylorvance/tv-shared-web` for shared app-facing code.
 Current common uses:
 
 - `BrandBadge`
+- `SourceBadge`
 - `TvProgramsMark` / `TvProgramsWordmark`
 - `createProjectStorage()`
 - `usePersistentState()`
@@ -117,12 +118,17 @@ Current common uses:
 Example:
 
 ```tsx
-import { BrandBadge, createProjectStorage } from '@taylorvance/tv-shared-web';
+import { BrandBadge, SourceBadge, createProjectStorage } from '@taylorvance/tv-shared-web';
 
 const storage = createProjectStorage('mcts-web', { version: 1 });
 
 export function Footer() {
-  return <BrandBadge />;
+  return (
+    <>
+      <BrandBadge />
+      <SourceBadge href="https://github.com/taylorvance/mcts-web" />
+    </>
+  );
 }
 ```
 

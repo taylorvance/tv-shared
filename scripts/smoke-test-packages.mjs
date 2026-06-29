@@ -15,6 +15,7 @@ const distIndexUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'index.js')
 const distAssetsUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'assets.js')).href;
 const distBrandBadgeUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'BrandBadge.js')).href;
 const distCodecsUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'codecs.js')).href;
+const distSourceBadgeUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'SourceBadge.js')).href;
 const distStorageUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'storage.js')).href;
 const distStorageDevUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'storage-dev.js')).href;
 const distWordmarkUrl = pathToFileURL(path.join(webPackageRoot, 'dist', 'TvProgramsWordmark.js')).href;
@@ -27,12 +28,14 @@ const devPackage = await import(devPackageIndexUrl);
 const assets = await import(distAssetsUrl);
 const brandBadgeModule = await import(distBrandBadgeUrl);
 const codecsModule = await import(distCodecsUrl);
+const sourceBadgeModule = await import(distSourceBadgeUrl);
 const storageModule = await import(distStorageUrl);
 const storageDevModule = await import(distStorageDevUrl);
 const wordmarkModule = await import(distWordmarkUrl);
 const distIndexSource = await fs.readFile(path.join(webPackageRoot, 'dist', 'index.js'), 'utf8');
 
 assert.equal(typeof webPackage.BrandBadge, 'function');
+assert.equal(typeof webPackage.SourceBadge, 'function');
 assert.equal(typeof webPackage.TvProgramsMark, 'function');
 assert.equal(typeof webPackage.TvProgramsWordmark, 'function');
 assert.equal(webPackage.TVPROGRAMS_URL, 'https://tvprograms.tech');
@@ -47,6 +50,7 @@ assert.equal(typeof webPackage.serializeSnapshot, 'function');
 assert.equal(typeof webPackage.useThemePreference, 'function');
 assert.equal(typeof webPackage.LiveAnnouncer, 'function');
 assert.equal(typeof brandBadgeModule.BrandBadge, 'function');
+assert.equal(typeof sourceBadgeModule.SourceBadge, 'function');
 assert.equal(typeof codecsModule.createStringCodec, 'function');
 assert.equal(typeof storageModule.createProjectStorage, 'function');
 assert.equal(typeof storageDevModule.ProjectStorageInspector, 'function');
@@ -54,6 +58,7 @@ assert.equal(typeof wordmarkModule.TvProgramsWordmark, 'function');
 assert.equal('TVPROGRAMS_MARK_SVG_URL' in webPackage, false);
 assert.equal('TVPROGRAMS_MARK_PNG_URL' in webPackage, false);
 assert.match(webPkg.exports['./BrandBadge'].import, /dist\/BrandBadge\.js$/);
+assert.match(webPkg.exports['./SourceBadge'].import, /dist\/SourceBadge\.js$/);
 assert.match(webPkg.exports['./TvProgramsWordmark'].import, /dist\/TvProgramsWordmark\.js$/);
 assert.match(webPkg.exports['./assets'].import, /dist\/assets\.js$/);
 assert.match(webPkg.exports['./codecs'].import, /dist\/codecs\.js$/);
@@ -87,6 +92,11 @@ for (const assetUrl of [assets.TVPROGRAMS_MARK_SVG_URL, assets.TVPROGRAMS_MARK_P
 const badgeMarkup = renderToStaticMarkup(React.createElement(webPackage.BrandBadge));
 assert.match(badgeMarkup, /tvprograms\.tech/);
 assert.match(badgeMarkup, /https:\/\/tvprograms\.tech/);
+const sourceBadgeMarkup = renderToStaticMarkup(React.createElement(webPackage.SourceBadge, {
+  href: 'https://github.com/taylorvance/tv-shared',
+}));
+assert.match(sourceBadgeMarkup, /Source/);
+assert.match(sourceBadgeMarkup, /https:\/\/github\.com\/taylorvance\/tv-shared/);
 const wordmarkMarkup = renderToStaticMarkup(React.createElement(webPackage.TvProgramsWordmark));
 assert.match(wordmarkMarkup, /TV Programs/);
 
