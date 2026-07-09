@@ -14,6 +14,7 @@ Workflow logic lives under:
 - `.github/workflows/*`
 
 Because the consumers build independently in GitHub Actions, published packages are the default model for shared code.
+Reusable workflow releases are versioned separately with repo-level git tags such as `v1.0.0` and floating major tags such as `v1`; see [`workflow-release.md`](./workflow-release.md).
 
 ## Release Automation
 

@@ -105,6 +105,7 @@ Repo-specific aliases, generated directories, and one-off rule exceptions should
 ## Reusable Workflows
 
 Consumers should keep thin repo-local workflow wrappers and call the shared workflow logic from this repo.
+Use the floating major release tag for compatible workflow updates. Do not point consumer workflows at `main`, because shared workflow changes can otherwise break consumers without an intentional migration. See [`docs/workflow-release.md`](./docs/workflow-release.md) for the tagging policy.
 
 CI example:
 
@@ -121,7 +122,7 @@ permissions:
 
 jobs:
   verify:
-    uses: taylorvance/tv-shared/.github/workflows/verify.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/verify.yml@v1
     with:
       node-version: '22'
       working-directory: .
@@ -148,7 +149,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@v1
     with:
       node-version: '22'
       working-directory: .

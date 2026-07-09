@@ -6,6 +6,7 @@
       "DOM",
       "ES2020"
     ],
+    "types": [],
     "moduleResolution": "NodeNext",
     "jsx": "react-jsx",
     "strict": true,

@@ -140,6 +140,7 @@ Consumers should call these workflows from this repo:
 - `tv-shared/.github/workflows/deploy-pages.yml`
 
 Copyable wrappers live in `docs/examples/`.
+Consumers should use the floating major release tag, such as `@v1`, for compatible workflow updates. Use an immutable release tag or commit SHA only when a consumer needs frozen behavior. Do not use `@main`.
 
 CI example:
 
@@ -156,7 +157,7 @@ permissions:
 
 jobs:
   verify:
-    uses: taylorvance/tv-shared/.github/workflows/verify.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/verify.yml@v1
     with:
       node-version: '22'
       working-directory: .
@@ -183,7 +184,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@main
+    uses: taylorvance/tv-shared/.github/workflows/deploy-pages.yml@v1
     with:
       node-version: '22'
       working-directory: .

@@ -23,6 +23,7 @@
     "preview:host": "npm run preview --workspace @tv-shared/playground -- --host",
     "prepare": "simple-git-hooks",
     "release": "npm run build && changeset publish",
+    "release:workflows": "node scripts/release-workflows.mjs",
     "test": "vitest run",
     "test:dist": "node scripts/smoke-test-packages.mjs",
     "version-packages": "changeset version && npm install --package-lock-only",
