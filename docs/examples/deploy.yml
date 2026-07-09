@@ -17,7 +17,7 @@ jobs:
     with:
       node-version: '20'
       working-directory: .
-      install-command: npm ci
+      package-manager: auto
       lint-command: npm run lint
       test-command: npm run test -- --run
       build-command: npm run build

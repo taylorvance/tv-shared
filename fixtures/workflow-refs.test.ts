@@ -8,6 +8,11 @@ const workflowDocPaths = [
   ...listDocsFiles('docs'),
 ];
 
+function findTrackedMainWorkflowRefs(contents) {
+  const trackedMainPattern = /taylorvance\/tv-shared\/\.github\/workflows\/.+@main/g;
+  return Array.from(contents.matchAll(trackedMainPattern), (match) => match[0]);
+}
+
 function listDocsFiles(directory) {
   return readdirSync(directory)
     .flatMap((entry) => {
@@ -23,14 +28,19 @@ function listDocsFiles(directory) {
 }
 
 describe('documented reusable workflow refs', () => {
-  it('does not recommend tracking tv-shared main', () => {
-    const trackedMainPattern = /taylorvance\/tv-shared\/\.github\/workflows\/.+@main/g;
+  it('identifies refs that track tv-shared main', () => {
+    expect(findTrackedMainWorkflowRefs(
+      'uses: taylorvance/tv-shared/.github/workflows/verify.yml@main',
+    )).toEqual([
+      'taylorvance/tv-shared/.github/workflows/verify.yml@main',
+    ]);
+  });
 
+  it('does not recommend tracking tv-shared main', () => {
     const matches = workflowDocPaths.flatMap((filePath) => {
       const contents = readFileSync(filePath, 'utf8');
-      return Array.from(contents.matchAll(trackedMainPattern), (match) => (
-        `${filePath}: ${match[0]}`
-      ));
+      return findTrackedMainWorkflowRefs(contents)
+        .map((match) => `${filePath}: ${match}`);
     });
 
     expect(matches).toEqual([]);

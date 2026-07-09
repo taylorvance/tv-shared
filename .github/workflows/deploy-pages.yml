@@ -13,10 +13,20 @@ on:
         required: false
         default: '.'
         type: string
-      install-command:
-        description: Command used to install dependencies.
+      package-manager:
+        description: Package manager used for dependency install and cache. Use auto to detect from lockfiles.
         required: false
-        default: npm ci
+        default: auto
+        type: string
+      pnpm-version:
+        description: pnpm version to install when package-manager resolves to pnpm. Leave empty to read package.json packageManager.
+        required: false
+        default: ''
+        type: string
+      install-command:
+        description: Optional dependency install override. Defaults to npm ci for npm and pnpm install --frozen-lockfile for pnpm.
+        required: false
+        default: ''
         type: string
       lint-command:
         description: Optional lint command. Leave empty to skip.
@@ -60,19 +70,106 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Resolve package manager
+        id: package_manager
+        shell: bash
+        env:
+          PACKAGE_MANAGER_INPUT: ${{ inputs.package-manager }}
+          WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        run: |
+          set -euo pipefail
+
+          case "$PACKAGE_MANAGER_INPUT" in
+            auto|npm|pnpm)
+              ;;
+            *)
+              echo "::error title=Invalid package-manager::Expected package-manager to be one of: auto, npm, pnpm."
+              exit 1
+              ;;
+          esac
+
+          project_dir="$GITHUB_WORKSPACE/$WORKING_DIRECTORY"
+
+          if [ ! -d "$project_dir" ]; then
+            echo "::error title=Invalid working-directory::Directory does not exist: $WORKING_DIRECTORY"
+            exit 1
+          fi
+
+          manager="$PACKAGE_MANAGER_INPUT"
+          cache_dependency_path=''
+
+          if [ "$manager" = auto ]; then
+            if [ -f "$project_dir/pnpm-lock.yaml" ]; then
+              manager=pnpm
+              cache_dependency_path="$WORKING_DIRECTORY/pnpm-lock.yaml"
+            elif [ -f "$project_dir/package-lock.json" ]; then
+              manager=npm
+              cache_dependency_path="$WORKING_DIRECTORY/package-lock.json"
+            elif [ -f "$project_dir/npm-shrinkwrap.json" ]; then
+              manager=npm
+              cache_dependency_path="$WORKING_DIRECTORY/npm-shrinkwrap.json"
+            else
+              echo "::error title=Cannot detect package manager::No pnpm-lock.yaml, package-lock.json, or npm-shrinkwrap.json found in $WORKING_DIRECTORY. Set package-manager to npm or pnpm, or commit a supported lockfile."
+              exit 1
+            fi
+          elif [ "$manager" = pnpm ]; then
+            if [ ! -f "$project_dir/pnpm-lock.yaml" ]; then
+              echo "::error title=Missing pnpm lockfile::package-manager is pnpm, but pnpm-lock.yaml was not found in $WORKING_DIRECTORY."
+              exit 1
+            fi
+
+            cache_dependency_path="$WORKING_DIRECTORY/pnpm-lock.yaml"
+          elif [ -f "$project_dir/package-lock.json" ]; then
+            cache_dependency_path="$WORKING_DIRECTORY/package-lock.json"
+          elif [ -f "$project_dir/npm-shrinkwrap.json" ]; then
+            cache_dependency_path="$WORKING_DIRECTORY/npm-shrinkwrap.json"
+          else
+            echo "::error title=Missing npm lockfile::package-manager is npm, but package-lock.json or npm-shrinkwrap.json was not found in $WORKING_DIRECTORY."
+            exit 1
+          fi
+
+          {
+            printf 'manager=%s\n' "$manager"
+            printf 'cache_dependency_path=%s\n' "$cache_dependency_path"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up pnpm from package.json
+        if: ${{ steps.package_manager.outputs.manager == 'pnpm' && inputs.pnpm-version == '' }}
+        uses: pnpm/action-setup@v6
+        with:
+          package_json_file: ${{ inputs.working-directory }}/package.json
+
+      - name: Set up pnpm version
+        if: ${{ steps.package_manager.outputs.manager == 'pnpm' && inputs.pnpm-version != '' }}
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ inputs.pnpm-version }}
+          package_json_file: ${{ inputs.working-directory }}/package.json
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
-          cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+          cache: ${{ steps.package_manager.outputs.manager }}
+          cache-dependency-path: ${{ steps.package_manager.outputs.cache_dependency_path }}
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
+        if: ${{ inputs.install-command != '' }}
         working-directory: ${{ inputs.working-directory }}
         run: ${{ inputs.install-command }}
+
+      - name: Install dependencies with npm
+        if: ${{ inputs.install-command == '' && steps.package_manager.outputs.manager == 'npm' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: npm ci
+
+      - name: Install dependencies with pnpm
+        if: ${{ inputs.install-command == '' && steps.package_manager.outputs.manager == 'pnpm' }}
+        working-directory: ${{ inputs.working-directory }}
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         if: ${{ inputs.lint-command != '' }}

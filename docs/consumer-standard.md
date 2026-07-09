@@ -142,6 +142,21 @@ Consumers should call these workflows from this repo:
 Copyable wrappers live in `docs/examples/`.
 Consumers should use the floating major release tag, such as `@v1`, for compatible workflow updates. Use an immutable release tag or commit SHA only when a consumer needs frozen behavior. Do not use `@main`.
 
+Both workflows support npm and pnpm through `package-manager`, which defaults to `auto`.
+
+Detection happens inside the consumer `working-directory`:
+
+- `pnpm-lock.yaml` selects pnpm
+- `package-lock.json` or `npm-shrinkwrap.json` selects npm
+- explicit `package-manager: npm` or `package-manager: pnpm` overrides auto-detection
+
+Default installs are package-manager specific when `install-command` is omitted:
+
+- npm: `npm ci`
+- pnpm: `pnpm install --frozen-lockfile`
+
+Use `pnpm-version` when a pnpm consumer needs to install a specific pnpm version, such as when the repo does not expose the version through a top-level `packageManager` field.
+
 CI example:
 
 ```yml
@@ -161,7 +176,7 @@ jobs:
     with:
       node-version: '22'
       working-directory: .
-      install-command: npm ci
+      package-manager: auto
       lint-command: npm run lint
       test-command: npm run test
       build-command: npm run build
@@ -188,7 +203,7 @@ jobs:
     with:
       node-version: '22'
       working-directory: .
-      install-command: npm ci
+      package-manager: auto
       lint-command: npm run lint
       test-command: npm run test
       build-command: npm run build
