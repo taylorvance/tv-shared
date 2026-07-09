@@ -14,12 +14,12 @@ Use an immutable `vX.Y.Z` tag or commit SHA only when a consumer needs frozen wo
 
 `v1.1.0` adds compatible npm/pnpm package-manager support:
 
-- `package-manager` defaults to `auto`
+- package-manager detection is on by default
 - `pnpm-lock.yaml` selects pnpm
 - `package-lock.json` or `npm-shrinkwrap.json` selects npm
 - omitted `install-command` runs `npm ci` for npm or `pnpm install --frozen-lockfile` for pnpm
 - existing npm consumers can keep their current inputs, including `install-command: npm ci`
-- `pnpm-version` is available when the workflow must install a specific pnpm version
+- `package-manager`, `install-command`, and `pnpm-version` are available as overrides
 
 ## Versioning
 

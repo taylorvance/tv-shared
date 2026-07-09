@@ -107,7 +107,7 @@ Repo-specific aliases, generated directories, and one-off rule exceptions should
 Consumers should keep thin repo-local workflow wrappers and call the shared workflow logic from this repo.
 Use the floating major release tag for compatible workflow updates. Do not point consumer workflows at `main`, because shared workflow changes can otherwise break consumers without an intentional migration. See [`docs/workflow-release.md`](./docs/workflow-release.md) for the tagging policy.
 
-Both reusable workflows support npm and pnpm. `package-manager` defaults to `auto`, which detects `pnpm-lock.yaml`, `package-lock.json`, or `npm-shrinkwrap.json` from the consumer `working-directory`. Leave `install-command` unset to use the package-manager default install command: `npm ci` for npm and `pnpm install --frozen-lockfile` for pnpm. Existing npm wrappers that pass `install-command: npm ci` continue to work unchanged.
+Both reusable workflows support npm and pnpm by default. Commit one supported lockfile in the consumer `working-directory` and omit package-manager inputs: `pnpm-lock.yaml` selects pnpm, while `package-lock.json` or `npm-shrinkwrap.json` selects npm. Override `package-manager`, `install-command`, or `pnpm-version` only when a repo needs custom behavior.
 
 CI example:
 
@@ -128,7 +128,6 @@ jobs:
     with:
       node-version: '22'
       working-directory: .
-      package-manager: auto
       lint-command: npm run lint
       test-command: npm run test
       build-command: npm run build
@@ -155,7 +154,6 @@ jobs:
     with:
       node-version: '22'
       working-directory: .
-      package-manager: auto
       lint-command: npm run lint
       test-command: npm run test
       build-command: npm run build
